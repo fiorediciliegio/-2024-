@@ -1,0 +1,19 @@
+主界面设计：
+#导航栏
+  *软件icon+名称：txt
+  *home:button-click
+  *用户头像：img
+#侧边栏
+  *management:txt
+    -项目规划：click
+    -人力
+    -...
+  *archive
+    -...
+#搜索栏
+  *搜索框
+  *新建项目：button-click
+#主体块
+  *项目列表：显示已创建的项目
+#底部footer
+  *网页信息：txt
