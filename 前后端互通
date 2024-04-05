@@ -6,7 +6,7 @@ try {
     // 创建 XMLHttpRequest 对象
     var xhr = new XMLHttpRequest();
 
-    // 设置请求方法和 URL，此处/api/data应为后端的URL
+    // 设置请求方法和 URL，请求方法有POST、GET、PUT、DELETE四种，此处/api/data应为后端的URL
     xhr.open('POST', '/api/data', true);
 
     // 设置请求头
