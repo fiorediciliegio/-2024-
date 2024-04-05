@@ -16,7 +16,7 @@
             var inputData = document.getElementById('inputData').value;
             try {
                 // 尝试将输入数据解析为 JSON
-                var jsonData = JSON.parse(inputData);
+                var jsonData = JSON.stringify(inputData);
 
                 // 创建 XMLHttpRequest 对象
                 var xhr = new XMLHttpRequest();
