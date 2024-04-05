@@ -1,0 +1,19 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+//这一行使用 @app.route 装饰器来定义一个新的路由或端点。'/backend_endpoint' 是该路由的 URL 路径，methods=['POST'] 表示这个路由只接受 POST 请求。
+@app.route('/backend_endpoint', methods=['POST'])
+def handle_data():
+    //使用 Flask 的 request 对象的 get_json() 方法从客户端请求中获取 JSON 数据，并将其存储在 request_data 变量中。
+    request_data = request.get_json()
+
+    // 在后端处理 JSON 数据
+    // 这里只是简单地将接收到的数据返回
+    processed_data = {'message': 'Received data successfully', 'data': request_data}
+
+    // 将处理后的数据作为 JSON 响应返回给前端
+    return jsonify(processed_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
