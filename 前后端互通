@@ -1,0 +1,33 @@
+var inputData = document.getElementById('inputData').value;
+try {
+    // 尝试将输入数据解析为 JSON
+    var jsonData = JSON.parse(inputData);
+
+    // 创建 XMLHttpRequest 对象
+    var xhr = new XMLHttpRequest();
+
+    // 设置请求方法和 URL，此处/api/data应为后端的URL
+    xhr.open('POST', '/api/data', true);
+
+    // 设置请求头
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // 设置响应处理函数
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                // 显示服务器响应
+                document.getElementById('response').textContent = xhr.responseText;
+            } else {
+                // 显示错误消息
+                document.getElementById('response').textContent = 'Error: ' + xhr.statusText;
+            }
+        }
+    };
+
+    // 发送 JSON 数据
+    xhr.send(JSON.stringify(jsonData)); // 将数据转换为 JSON 字符串
+} catch (error) {
+    // 如果解析失败，显示错误消息
+    document.getElementById('response').textContent = 'Error: Invalid JSON format';
+}
