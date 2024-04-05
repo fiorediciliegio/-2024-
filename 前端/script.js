@@ -1,6 +1,7 @@
 function createProject() {
     // 获取用户输入的信息
     var name = document.getElementById('name').value;
+    var number = document.getElementById('number').value;
     var description = document.getElementById('description').value;
   
     // 创建包含用户输入信息的JavaScript对象
