@@ -13,4 +13,3 @@ class Project(models.Model):
     ADDRESS_Project = models.CharField(verbose_name='项目地址', max_length=100)
     DESC_Project = models.CharField(verbose_name='项目描述', max_length=1000)
     id = models.AutoField(primary_key=True)
-
