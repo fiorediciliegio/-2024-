@@ -58,34 +58,52 @@
             </div>
             <div class="panel-body">
                 <form method="post"{# 可以获取数据 #} class="form-horizontal">
-                    {% csrf_token %}    {# 防止报错，具体原因不明 #}
+                    {% csrf_token %} {# 防止报错，具体原因不明 #}
                     <div class="form-group">
                         <label for="inputProjectName" class="control-label">项目编号</label>
                         <input type="text" class="form-control" id="inputProjectName" placeholder="请输入项目编号"
-                        name="NUM_Project">
+                               name="NUM_Project">
                     </div>
                     <div class="form-group">
                         <label for="inputProjectName" class="control-label">项目名称</label>
                         <input type="text" class="form-control" id="inputProjectName" placeholder="请输入项目名称"
-                        name="NAME_Project">
+                               name="NAME_Project">
                     </div>
 
                     <div class="form-group">
                         <label for="inputProjectType" class="control-label">项目类型</label>
                         <input type="text" class="form-control" id="inputProjectType" placeholder="请输入项目类型"
-                        name="TYPE_Project">
+                               name="TYPE_Project">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputProjectManager" class="control-label">项目负责人</label>
+                        <input type="text" class="form-control" id="inputProjectManager" placeholder="请输入项目负责人"
+                               name="MANA_Project">
                     </div>
 
                     <div class="form-group">
                         <label for="inputProjectAddress" class="control-label">项目地址</label>
                         <input type="text" class="form-control" id="inputProjectAddress" placeholder="请输入项目地址"
-                        name="ADDRESS_Project">
+                               name="ADDRESS_Project">
                     </div>
 
                     <div class="form-group">
                         <label for="inputProjectValue" class="control-label">项目价值</label>
-                        <input type="text" class="form-control" id="inputProjectValue" placeholder="请输入项目价值"
-                        name="VALUE_Project">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputProjectValue" placeholder="请输入项目价值"
+                                   name="VALUE_Project">
+                            <div class="input-group-addon">
+                                <label for="currency" class="input-group-text">货币单位</label>
+                                <select class="form-control" id="currency" name="CUR_Project">
+                                    <option value="USD">USD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="BTC">BTC</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
