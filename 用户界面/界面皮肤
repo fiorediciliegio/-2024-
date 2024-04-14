@@ -1,0 +1,95 @@
+<body class="dark-theme">
+<div class="options">
+<label for="light">
+<input  id="light" 
+type="radio" value="light-theme" name="theme"
+onchange ="changeTheme()" checked />
+<div>日间主题</div>
+</label>
+<label for="dark">
+<input id="dark" type="radio" value="dark-theme" name="theme"/>
+<div>夜间主题</div>
+</label>
+<label for="tongji">
+<input id="tongji" type="radio" value="tongji-theme" name="theme"/>
+<div>同济主题</div>
+</label>
+</div>
+<div class="brand">
+<h1>土木工程管理项目</h1>
+<p>帮助每一个迷路的土木人</p>
+</div>
+</body>
+
+<script>
+    document
+    .querySelectorAll(".options input[name=theme]")
+    .forEach(function(radio){
+        radio.onchange=function(){
+          document.body.className=radio.value
+        }
+    } )
+    function changeTheme(){
+        alert(event.target.value)
+    }
+</script>
+<style>
+    .light-theme{
+    --text-color:black;
+    --back-color:pink;
+    --brand-color:white;
+   }
+   .dark-theme{
+    --text-color:white;
+    --back-color:#333;
+    --brand-color:black;
+   }
+   .tongji-theme{
+    --text-color:black;
+   
+    --brand-color:white;
+    background-image: url(picture/088f48358492cbeadd4be751741717a.jpg);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+   }
+   body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all is;
+    justify-content: center;
+    background-color: var(--back-color);
+    color: var(--text-color);
+   }
+   
+   .options{
+        display: inline-flex;
+        background-color: wheat;
+        border-radius: 16px;
+        overflow: hidden;
+        color: black;
+        font-weight: bold;
+    }
+    .options input{
+        display: none;
+    }
+    .options label div{
+        display: block;
+        padding: 12px;
+        cursor: pointer;
+    }
+    .options input:checked+div
+    {
+        background-color: black;
+        color: white;
+    }
+    .brand{
+        margin: 250px 0;
+        padding: 0 40px;
+        border-radius: 8px;
+        text-align: center;
+        justify-content: center;
+        background-color: var(--brand-color);
+    }
+</style>
