@@ -1,31 +1,49 @@
 import * as React from "react";
-import { Box, TextField, MenuItem } from "@material-ui/core";
+import { Box, TextField, MenuItem, Grid } from "@material-ui/core";
 
-export default function SelectBox({ set, title, value, onChange }) {
+export default function SelectBox({ label, set, value, onChange }) {
   return (
-    <Box
-      component="form"
-      sx={{
-        "& .extField-ui-root": { m: 1, width: "25ch" },
-      }}
-      noValidate
-      autoComplete="off"
+    <Grid
+      container
+      direction="column"
+      justifyContent="center"
+      alignItems="flex-start"
     >
-      <div>
-        <TextField
-          select
-          label={title}
-          value={value}
-          onChange={onChange}
-          defaultValue={set[0].value}
+      <Grid item container>
+        <Box
+          component="form"
+          sx={{
+            "& .extField-ui-root": { m: 1, width: "25ch" },
+          }}
+          noValidate
+          autoComplete="off"
         >
-          {set.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </div>
-    </Box>
+          <label>{label}</label>
+        </Box>
+      </Grid>
+      <Grid item container>
+        <Box
+          component="form"
+          sx={{
+            "& > :not(style)": { m: 1, width: "25ch " },
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <TextField
+            select
+            value={value}
+            onChange={onChange}
+            defaultValue={set[0].value}
+          >
+            {set.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }

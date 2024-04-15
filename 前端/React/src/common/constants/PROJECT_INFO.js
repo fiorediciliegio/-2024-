@@ -1,22 +1,22 @@
 export const projecttype = [
   {
-    value: "USD",
+    value: "私人建筑",
     label: "私人建筑",
   },
   {
-    value: "EUR",
+    value: "公共建筑",
     label: "公共建筑",
   },
   {
-    value: "BTC",
+    value: "桥梁",
     label: "桥梁",
   },
   {
-    value: "JPY",
+    value: "隧道",
     label: "隧道",
   },
   {
-    value: "JPY",
+    value: "道路",
     label: "道路",
   },
 ];
@@ -44,5 +44,24 @@ export const pjcolumns = [
     label: "创建日期",
     minWidth: 170,
     format: (value) => value.toLocaleString(),
+  },
+];
+
+export const projectlist = [
+  {
+    label: "第一个项目",
+    value: "第一个项目",
+  },
+  {
+    label: "第二个项目",
+    value: "第二个项目",
+  },
+  {
+    label: "第三个项目",
+    value: "第三个项目",
+  },
+  {
+    label: "第四个项目",
+    value: "第四个项目",
   },
 ];
