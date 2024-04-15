@@ -5,7 +5,7 @@ const buttons1 = [
   <Button
     key="one"
     onClick={() => {
-      window.open("https://example.com", "_self");
+      window.open("/PlanPage", "_self");
     }}
   >
     项目规划

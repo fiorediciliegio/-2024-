@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, TextField, MenuItem } from "@material-ui/core";
 
-export default function SelectBox({ set, value, onChange }) {
+export default function SelectBox({ set, title, value, onChange }) {
   return (
     <Box
       component="form"
@@ -12,13 +12,15 @@ export default function SelectBox({ set, value, onChange }) {
       autoComplete="off"
     >
       <div>
-        <TextField select label="select" defaultValue={set[0].value}>
+        <TextField
+          select
+          label={title}
+          value={value}
+          onChange={onChange}
+          defaultValue={set[0].value}
+        >
           {set.map((option) => (
-            <MenuItem
-              key={option.value}
-              value={option.value}
-              onChange={onChange}
-            >
+            <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>
           ))}
