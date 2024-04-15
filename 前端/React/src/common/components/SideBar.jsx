@@ -13,7 +13,7 @@ const buttons1 = [
   <Button
     key="two"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/PersonnelPage", "_self");
     }}
   >
     人力资源
@@ -21,7 +21,7 @@ const buttons1 = [
   <Button
     key="three"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/CostPage", "_self");
     }}
   >
     成本控制
@@ -29,7 +29,7 @@ const buttons1 = [
   <Button
     key="four"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/QualityPage", "_self");
     }}
   >
     质量监测
@@ -37,7 +37,7 @@ const buttons1 = [
   <Button
     key="five"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/SafetyPage", "_self");
     }}
   >
     安全监测

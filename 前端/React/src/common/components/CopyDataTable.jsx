@@ -1,5 +1,4 @@
 import * as React from "react";
-import axios from "axios";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -10,10 +9,18 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import { pjcolumns } from "../constants/PROJECT_INFO.js";
 
+function createData(name, code, type, manager, createdate) {
+  return { name, code, type, manager, createdate };
+}
+
+const rows = [
+  createData("项目1", 1, "Construction", "Team2", Date(2024, 3, 4)),
+  createData("项目2", 2, "Construction", "Team2", Date(2024, 3, 4)),
+];
+
 export default function DataTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -23,17 +30,6 @@ export default function DataTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  React.useEffect(() => {
-    axios
-      .get("API_URL")
-      .then((res) => {
-        setRows(res.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data from server", error);
-      });
-  }, []);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
