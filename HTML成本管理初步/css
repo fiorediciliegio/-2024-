@@ -1,0 +1,266 @@
+*{
+    margin: 0;
+    
+}
+header{
+    margin: 0;
+    padding: 0;
+    height: 20vh;
+    font-size: 50px;
+    text-indent :30vw;;
+    
+    
+}
+ .title{
+    
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #231c1a;
+}
+h1{
+    position: absolute;
+    width: 26vw;
+    height: 10vh;
+    left: 0vw;
+    top: 20vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #231c1a;
+    
+    
+}
+h2{
+    position: absolute;
+    width: 26vw;
+    height: 10vh;
+    left: 26vw;
+    top: 20vh;
+    line-height: 10vh;
+    text-align: center;
+    border: 1px solid #231c1a;
+}
+h3{
+    position: absolute;
+    width: 26vw;
+    height: 10vh;
+    left: 52vw;
+    top: 20vh;
+    line-height: 10vh;
+    font-size: 15px;
+    text-align: center;
+    border: 1px solid #231c1a;
+    font-size: 25px;
+}
+h4{
+    position: absolute;
+  width: 11vw;
+  height: 10vh;
+    left: 78vw;
+    top: 20vh;
+    /*上面四个分别是元素高宽和距离边框的距离*/
+    line-height: 10vh;
+    text-align: center;
+    color: black;
+    font-size: 3vh;
+    /*font指的是文字*/
+   border: 0px solid #231c1a;
+   border: 1px solid #231c1a;
+   /*margin指的是元素距离四周元素的距离*/
+   padding:  0px 0px 0px 0px; 
+   
+}
+h5{
+    position: absolute;
+    width: 11vw;
+    height: 10vh;
+    left: 89vw;
+    line-height: 10vh;
+    top: 20vh;
+    font-size: 3vh;
+    text-indent: 4vw;
+    border: 1px solid #231c1a;
+  
+    
+}
+body{
+background: linear-gradient(200deg,rgb(76, 202, 237),white);
+}
+.wrapper{
+    width: 100vw;
+    height: 60vh;
+    background-color: aliceblue;
+    padding: 40px;
+    /*盒子阴影*/
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      /*圆角*/
+      border-radius: 8px;
+      position: absolute;
+      top: 30vh;
+      
+      border: 1px solid #231c1a;
+}
+
+/*输入框获得焦点时*/
+.wrapper .input-data1 input:focus ~ label,
+/*输入框的值为合法时*/
+.wrapper .input-data1 input:valid ~ label{
+transform: translateY(-25px);
+font-size: 15px;
+color: #2c6fdb;
+}
+.wrapper .input-data1{
+   
+    
+    position: absolute;
+    width: 12vw;
+    height: 40px;
+      top: 1vh;
+      left: 7vw;
+   
+}
+.wrapper .input-data2{
+    position: absolute;
+    width: 15vw;
+    height: 40px;
+      top: 1vh;
+      left: 30vw;
+  
+}
+.wrapper .input-data3{
+    position: absolute;
+    width: 15vw;
+    height: 40px;
+      top: 1vh;
+      left: 56vw;
+  
+}
+
+.wrapper .input-data1 input{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border: none;
+    font-size: 17px;
+   border-bottom: 2px solid #c0c0c0;
+
+}
+.wrapper .input-data1 label{
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    color: #808080;
+    /*这个属性可以使点击label穿透到输入框*/
+    pointer-events: none;
+    /*动画过渡*/
+transition: all 0.3s ease;
+}
+.wrapper .input-data1 .underline{
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+background-color: #2c6fdb;
+transform: scaleX(0);
+/*同样给动画加个过渡*/
+
+}
+.wrapper .input-data1 input:focus~ .underline,
+.wrapper .input-data1 input:valid~ .underline{
+    /*沿X轴放大*/
+    transform: scaleX(1);
+}
+
+
+
+
+/*输入框获得焦点时*/
+.wrapper .input-data2 input:focus ~ label,
+/*输入框的值为合法时*/
+.wrapper .input-data2 input:valid ~ label{
+transform: translateY(-25px);
+font-size: 15px;
+color: #2c6fdb;
+}
+.wrapper .input-data2 input{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border: none;
+    font-size: 17px;
+   border-bottom: 2px solid #c0c0c0;
+
+}
+.wrapper .input-data2 label{
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    color: #808080;
+    /*这个属性可以使点击label穿透到输入框*/
+    pointer-events: none;
+    /*动画过渡*/
+transition: all 0.3s ease;
+}
+.wrapper .input-data2 .underline1{
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+background-color: #2c6fdb;
+transform: scaleX(0);
+/*同样给动画加个过渡*/
+
+}
+.wrapper .input-data2 input:focus~ .underline1,
+.wrapper .input-data2 input:valid~ .underline1{
+    /*沿X轴放大*/
+    transform: scaleX(1);
+}
+
+
+
+/*输入框获得焦点时*/
+.wrapper .input-data3 input:focus ~ label,
+/*输入框的值为合法时*/
+.wrapper .input-data3 input:valid ~ label{
+transform: translateY(-25px);
+font-size: 15px;
+color: #2c6fdb;
+}
+.wrapper .input-data3 input{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border: none;
+    font-size: 17px;
+   border-bottom: 2px solid #c0c0c0;
+
+}
+.wrapper .input-data3 label{
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    color: #808080;
+    /*这个属性可以使点击label穿透到输入框*/
+    pointer-events: none;
+    /*动画过渡*/
+transition: all 0.3s ease;
+}
+.wrapper .input-data3 .underline2{
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+background-color: #2c6fdb;
+transform: scaleX(0);
+/*同样给动画加个过渡*/
+
+}
+.wrapper .input-data3 input:focus~ .underline2,
+.wrapper .input-data3 input:valid~ .underline2{
+    /*沿X轴放大*/
+    transform: scaleX(1);
+}
