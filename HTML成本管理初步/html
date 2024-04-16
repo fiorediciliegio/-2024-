@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成本管理</title>
+    <link rel="stylesheet" href="成本管理.css">
+</head>
+<body>
+  <header>成本管理</header>
+  <main>
+  <section class="title">
+    <h1>项目</h1>
+    <h2>创建时间</h2>
+    <h3>成本</h3>
+    <h4>创建</h4>
+    <h5>管理</h5>
+</section>    
+<div class="wrapper">
+    <div class="input-data1">
+        <input type="text" required>
+        <div class="underline"></div>
+        <label>您的项目</label>
+    </div>
+    <div class="input-data2">
+      <input type="text" required>
+      <div class="underline1"></div>
+      <label>请输入时间</label>
+    </div>
+     <div class="input-data3">
+    <input type="text" required>
+    <div class="underline2"></div>
+    <label>请输入成本</label>
+    </div>
+</div>
+
+
+</main>
+</body>
+</html>
