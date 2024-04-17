@@ -46,7 +46,7 @@ export default function CreatePj({ onClose }) {
   const handleSubmit = async () => {
     try {
       await axios.post(
-        "http://60.205.114.207:8000/create_project",
+        "https://60.205.114.207:8000/create_project",
         projectInfo,
       );
       onClose();

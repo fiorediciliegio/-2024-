@@ -40,7 +40,7 @@ function MainPage() {
             alignItems="center"
             xs={10}
           >
-            <SearchBox></SearchBox>
+            <SearchBox label="Search Project..."></SearchBox>
           </Grid>
           {/* 新建项目按钮 */}
           <Grid
