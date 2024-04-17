@@ -1,7 +1,14 @@
 import * as React from "react";
 import { Box, Paper } from "@material-ui/core";
 
-export default function InfoDisplay() {
+export default function InfoDisplay({
+  label,
+  line1,
+  line2,
+  line3,
+  line4,
+  line5,
+}) {
   return (
     <Box
       style={{
@@ -14,12 +21,12 @@ export default function InfoDisplay() {
       }}
     >
       <Paper style={{ width: "100%", height: "100%", padding: "20px" }}>
-        <h3>项目信息</h3>
-        <p>项目编号</p>
-        <p>项目类型</p>
-        <p>项目负责人</p>
-        <p>开始与结束日期</p>
-        <p>项目地址</p>
+        <h4>{label}</h4>
+        <p>{line1}</p>
+        <p>{line2}</p>
+        <p>{line3}</p>
+        <p>{line4}</p>
+        <p>{line5}</p>
       </Paper>
     </Box>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import moment from "moment";
 
 export default function TimePicker({ label, value, onChange }) {

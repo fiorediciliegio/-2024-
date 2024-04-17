@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@ant-design/icons':
+    specifier: 5.3.6
+    version: 5.3.6(react-dom@18.2.0)(react@18.2.0)
   '@fontsource/roboto':
     specifier: 5.0.12
     version: 5.0.12
@@ -32,6 +35,9 @@ dependencies:
   antd:
     specifier: 5.16.1
     version: 5.16.1(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0)
+  antd-css-utilities:
+    specifier: 2.0.5
+    version: 2.0.5
   axios:
     specifier: 1.6.8
     version: 1.6.8
@@ -1366,6 +1372,10 @@ packages:
     dependencies:
       color-convert: 1.9.3
     dev: true
+
+  /antd-css-utilities@2.0.5:
+    resolution: {integrity: sha512-/ia4wdzKYbk7klHm/j+e/1izlc65VbPksYU3gOMXfr7qn7XPqiXT6gdCrACumBZ0IXvSY9X7U6D3qIW7JhCQrw==}
+    dev: false
 
   /antd@5.16.1(moment@2.30.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-XAlLRrgYV+nj9FHnkXEPS6HNcKcluEa8v44e7Cixjlp8aOXRhUI6IfZaKpc2MPGjQ+06rp62/dsxOUNJW9kfLA==}

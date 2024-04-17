@@ -2,31 +2,10 @@ import React from "react";
 import SideBar from "../components/SideBar.jsx";
 import NavBar from "../components/NavBar.jsx";
 import SelectBox from "../components/SelectBox.jsx";
-import MilestoneLine from "../components/MilestoneLine.jsx";
 import { Grid } from "@material-ui/core";
 import { projectlist } from "../constants/PROJECT_INFO.js";
 import InfoDisplay from "../components/InfoDisplay.jsx";
-
-const timelineItems = [
-  {
-    date: "2022-01-01",
-    title: "事件标题1",
-    description: "事件描述1",
-    status: "completed",
-  },
-  {
-    date: "2022-02-15",
-    title: "事件标题2",
-    description: "事件描述2",
-    status: "pending",
-  },
-  {
-    date: "2022-03-30",
-    title: "事件标题3",
-    description: "事件描述3",
-    status: "ongoing",
-  },
-];
+import TimeLineWithAdd from "../components/TimeLineWithAdd.jsx";
 
 export default function PlanPage() {
   return (
@@ -53,6 +32,7 @@ export default function PlanPage() {
           justifyContent="flex-start"
           alignItems="flex-start"
           xs={5}
+          spacing={2}
         >
           {/*选择项目框 */}
           <Grid item>
@@ -60,14 +40,16 @@ export default function PlanPage() {
           </Grid>
           {/* 项目信息展示框 */}
           <Grid item>
-            <InfoDisplay></InfoDisplay>
-          </Grid>
-          {/* 节点展示框 */}
-          <Grid item>
-            <InfoDisplay></InfoDisplay>
+            <InfoDisplay
+              label="项目信息"
+              line1="100001"
+              line2="项目负责人："
+              line3="项目起止日期："
+              line4="项目描述："
+              line5="项目地址："
+            ></InfoDisplay>
           </Grid>
         </Grid>
-
         <Grid item container xs={5}>
           <Grid
             item
@@ -76,7 +58,7 @@ export default function PlanPage() {
             alignItems="center"
             xs={10}
           >
-            <MilestoneLine items={timelineItems} />
+            <TimeLineWithAdd />
           </Grid>
         </Grid>
       </Grid>
