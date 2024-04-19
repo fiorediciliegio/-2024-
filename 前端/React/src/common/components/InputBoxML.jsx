@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, TextField, Grid } from "@material-ui/core";
+import { Box, TextField, Grid } from "@mui/material";
 
 export default function InputBox({ label, value, onChange }) {
   return (
@@ -18,7 +18,7 @@ export default function InputBox({ label, value, onChange }) {
           noValidate
           autoComplete="off"
         >
-          {label}
+          <label>{label}</label>
         </Box>
       </Grid>
       <Grid item container>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import SideBar from "../components/SideBar.jsx";
 import NavBar from "../components/NavBar.jsx";
 import SearchBox from "../components/SearchBox.jsx";
@@ -18,7 +18,7 @@ export default function PlanPage() {
     <Grid container spacing={2}>
       {/*顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBar></NavBar>
+        <NavBar title="ManageYourProject--人力资源"></NavBar>
       </Grid>
       <Grid item container spacing={2}>
         {/*侧边栏 */}

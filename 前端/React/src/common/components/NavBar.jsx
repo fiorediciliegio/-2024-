@@ -11,12 +11,12 @@ import {
   Avatar,
   Tooltip,
   MenuItem,
-} from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
+} from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function NavBar() {
+export default function NavBar({ title }) {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -48,7 +48,7 @@ function NavBar() {
                   textDecoration: "none",
                 }}
               >
-                ManageYourProject
+                {title}
               </Typography>
             </Grid>
             <Grid item xs={1}>
@@ -107,4 +107,3 @@ function NavBar() {
     </AppBar>
   );
 }
-export default NavBar;

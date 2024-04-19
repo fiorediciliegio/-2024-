@@ -1,34 +1,39 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
 import { pjcolumns } from "../constants/PROJECT_INFO.js";
 
 export default function DataTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState([]);
+
+  const [projectInfo, setprojectInfo] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(10); 
+  const [rows, setRows] = useState([]);
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    setprojectInfo(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setprojectInfo(0); 
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     axios
       .get("API_URL")
       .then((res) => {
-        setRows(res.data);
+        const extractedData = res.data.map(item => ({
+          pjname: item.pjname,
+          pjnumber: item.pjnumber,
+          pjtype:item.pjtype,
+          pjmanager: item.pjmanager
+        }));
+        setRows(extractedData);
       })
       .catch((error) => {
         console.error("Error fetching data from server", error);
@@ -54,7 +59,7 @@ export default function DataTable() {
           </thead>
           <tbody>
             {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .slice(projectInfo * rowsPerPage, projectInfo * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
@@ -79,7 +84,7 @@ export default function DataTable() {
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
-        page={page}
+        page={projectInfo}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />

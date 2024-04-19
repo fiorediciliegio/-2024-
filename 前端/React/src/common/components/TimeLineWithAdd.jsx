@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Timeline, Button, Input } from "antd";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import {Grid} from "@mui/material";
+import { Timeline,Button, Input } from "antd";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 
 const TimeLineWithAdd = () => {
   const [events, setEvents] = useState([]);
@@ -30,42 +33,51 @@ const TimeLineWithAdd = () => {
   };
 
   return (
-    <div>
-      <Timeline>
-        {events.map((event, index) => (
-          <Timeline.Item key={index}>
-            <p>{event.event}</p>
-            <p>{event.description}</p>
-            <p>{event.date.toLocaleDateString()}</p>{" "}
-            {/* Use toLocaleDateString() to format the date */}
-          </Timeline.Item>
-        ))}
-      </Timeline>
-      <div style={{ marginTop: "20px" }}>
+    <Grid
+      container
+      direction="column"
+      justifyContent="center"
+      alignItems="flex-start"
+    >
+      <Grid item container>
+        <Timeline>
+          {events.map((event, index) => (
+            <Timeline.Item key={index}>
+              <p>{event.event}</p>
+              <p>{event.description}</p>
+              <p>{event.date.toLocaleDateString()}</p>{" "}
+              {/* Use toLocaleDateString() to format the date */}
+            </Timeline.Item>
+          ))}
+        </Timeline>
+      </Grid>
+      <Grid item container spacing={1}>
+        <Grid item>
         <Input
-          placeholder="Event"
+          placeholder="节点事件"
           value={newEvent}
           onChange={(e) => setNewEvent(e.target.value)}
           style={{ marginRight: "10px" }}
-        />
+        /></Grid>
+        <Grid item>
         <Input
-          placeholder="Description"
+          placeholder="描述"
           value={newEventDescription}
           onChange={(e) => setNewEventDescription(e.target.value)}
           style={{ marginRight: "10px" }}
-        />
-        <DatePicker
-          selected={newEventDate}
-          onChange={(date) => setNewEventDate(date)}
-          dateFormat="yyyy-MM-dd"
-          placeholderText="Select Date"
-          style={{ marginRight: "10px" }}
-        />
+        /></Grid>
+        <Grid item>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker selected={newEventDate}
+            onChange={(date) => setNewEventDate(date)} />
+        </LocalizationProvider></Grid>
+        <Grid item>
         <Button type="primary" onClick={handleAddEvent}>
           添加项目节点
         </Button>
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
