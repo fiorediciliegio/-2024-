@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, ButtonGroup, Box, Typography } from "@material-ui/core";
+import { Button, ButtonGroup, Box, Typography } from "@mui/material";
 
 const buttons1 = [
   <Button
@@ -47,7 +47,7 @@ const buttons2 = [
   <Button
     key="6-1"
     onClick={() => {
-      window.open("https://example.com", "_self");
+      window.open("/Document", "_self");
     }}
   >
     文档
@@ -55,37 +55,38 @@ const buttons2 = [
   <Button
     key="6-2"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/Drawing", "_self");
     }}
   >
     图纸
   </Button>,
   <Button
-    key="t6-3"
+    key="6-3" // 修正键值为 "6-3"
     onClick={() => {
-      window.open(url, "_self");
+      window.open("/Photo", "_self");
     }}
   >
     照片
   </Button>,
 ];
+
 export default function SideBar() {
   return (
     <Box
       sx={{
         display: "flex",
+        flexDirection: "column", // 修改为垂直方向布局
         "& > *": {
           m: 1,
         },
       }}
     >
+      {/* Management 标题 */}
       <Typography
         variant="h6"
         noWrap
         component="span"
         sx={{
-          mr: 2,
-          display: { xs: "none", md: "flex" },
           fontFamily: "monospace",
           fontWeight: 700,
           letterSpacing: ".3rem",
@@ -94,6 +95,7 @@ export default function SideBar() {
       >
         Management
       </Typography>
+      {/* Management 按钮组 */}
       <ButtonGroup
         orientation="vertical"
         aria-label="Vertical button group"
@@ -104,13 +106,13 @@ export default function SideBar() {
       >
         {buttons1}
       </ButtonGroup>
+      {/* Archive 标题 */}
       <Typography
         variant="h6"
         noWrap
         component="span"
         sx={{
-          mr: 2,
-          display: { xs: "none", md: "flex" },
+          mt: 2, // 增加上边距
           fontFamily: "monospace",
           fontWeight: 700,
           letterSpacing: ".3rem",
@@ -119,6 +121,7 @@ export default function SideBar() {
       >
         Archive
       </Typography>
+      {/* Archive 按钮组 */}
       <ButtonGroup
         orientation="vertical"
         aria-label="Vertical button group"

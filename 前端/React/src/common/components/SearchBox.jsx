@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, TextField } from "@material-ui/core";
+import { Box, TextField } from "@mui/material";
 
 export default function SearchBox({ label }) {
   return (
@@ -7,9 +7,11 @@ export default function SearchBox({ label }) {
       sx={{
         width: 500,
         maxWidth: "100%",
+        position: "relative", 
+        zIndex: 0, 
       }}
     >
-      <TextField fullWidth label={label} id="search" />
+      <TextField fullWidth label={label} id="search"/>
     </Box>
   );
 }

@@ -1,9 +1,13 @@
 import * as React from "react";
-import Button from "@material-ui/core/Button";
+import {Button} from "@mui/material";
 
 export default function SaveButton({ onClick, children }) {
   return (
-    <Button variant="contained" onClick={onClick}>
+    <Button 
+    variant="contained" 
+    onClick={onClick}  
+    sx={{ width: "100px", height: "40px" }}
+    >
       {children}
     </Button>
   );

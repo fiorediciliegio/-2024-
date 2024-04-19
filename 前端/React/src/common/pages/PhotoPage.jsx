@@ -3,12 +3,12 @@ import { Grid } from "@mui/material";
 import NavBar from "../components/NavBar.jsx";
 import SideBar from "../components/SideBar.jsx";
 
-export default function CostPage() {
+export default function PhotoPage() {
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBar title="ManageYourProject--成本控制"></NavBar>
+        <NavBar title="ManageYourProject--照片"></NavBar>
       </Grid>
       <Grid item container spacing={2}>
         {/* 侧边栏 */}

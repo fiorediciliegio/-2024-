@@ -1,14 +1,15 @@
 export const currencies = [
-  {
-    value: "USD",
-    label: "$",
-  },
-  {
-    value: "EUR",
-    label: "€",
-  },
-  {
-    value: "CNY",
-    label: "¥",
-  },
-];
+    {
+      value: "USD",
+      label: "$",
+    },
+    {
+      value: "EUR",
+      label: "€",
+    },
+    {
+      value: "CNY",
+      label: "¥",
+    },
+  ];
+  
