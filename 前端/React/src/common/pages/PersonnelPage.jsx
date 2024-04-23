@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import SideBar from "../components/SideBar.jsx";
-import NavBar from "../components/NavBar.jsx";
+import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
 import SearchBox from "../components/SearchBox.jsx";
 import OpenButton from "../components/OpenButton.jsx";
 import CreatePerson from "../pages/CreatePerson.jsx";
@@ -18,7 +18,7 @@ export default function PlanPage() {
     <Grid container spacing={2}>
       {/*顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBar title="ManageYourProject--人力资源"></NavBar>
+        <NavBarWithSelect title="ManageYourProject--人力资源"/>
       </Grid>
       <Grid item container spacing={2}>
         {/*侧边栏 */}

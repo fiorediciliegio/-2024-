@@ -9,6 +9,7 @@ import SafetyPage from "./common/pages/SafetyPage.jsx";
 import DocumentPage from "./common/pages/DocumentPage.jsx";
 import DrawingPage from "./common/pages/DrawingPage.jsx"
 import PhotoPage from "./common/pages/PhotoPage.jsx"
+import LoginPage from "./common/pages/LoginPage.jsx"
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Document" element={<DocumentPage />} />
         <Route path="/Drawing" element={<DrawingPage />} />
         <Route path="/Photo" element={<PhotoPage />} />
+        <Route path="/Login" element={<LoginPage />} />
       </Routes>
     </Router>
   );

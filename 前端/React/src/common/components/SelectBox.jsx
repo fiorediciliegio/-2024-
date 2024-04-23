@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, TextField, MenuItem, Grid } from "@mui/material";
 
-export default function SelectBox({ label, set, value, onChange }) {
+export default function SelectBox({ label, set, value, onChange,width }) {
   return (
     <Grid
       container
@@ -13,7 +13,7 @@ export default function SelectBox({ label, set, value, onChange }) {
         <Box
           component="form"
           sx={{
-            "& > :not(style)": { m: 1, width: "15ch" },
+            "& > :not(style)": { m: 1, width: {width} },
           }}
           noValidate
           autoComplete="off"
@@ -25,7 +25,7 @@ export default function SelectBox({ label, set, value, onChange }) {
         <Box
           component="form"
           sx={{
-            "& > :not(style)": { m: 1, width: "15ch " },
+            "& > :not(style)": { m: 1, width: {width} },
           }}
           noValidate
           autoComplete="off"

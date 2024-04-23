@@ -1,51 +1,65 @@
-import React from "react";
+import React, { useState } from "react";
 import SideBar from "../components/SideBar.jsx";
-import NavBar from "../components/NavBar.jsx";
+import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
 import { Grid } from "@mui/material";
 import InfoDisplay from "../components/InfoDisplay.jsx";
 import TimeLineWithAdd from "../components/TimeLineWithAdd.jsx";
-import PieChart from "../components/PieChart.jsx"
+import BasicPie from "../components/PieChart.jsx";
+import Axios from "axios";
 
 export default function PlanPage() {
+  const [selectedProjectInfo, setSelectedProjectInfo] = useState(null);
+
+  const handleSelectProject = async (project) => {
+    try {
+      const response = await Axios.get(`your-backend-url/projects/${project}`);
+      setSelectedProjectInfo(response.data.projectInfo);
+    } catch (error) {
+      console.error("Error fetching project information:", error);
+    }
+  };
+
   return (
     <Grid container spacing={2} >
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBar title="ManageYourProject--项目规划"/>
+        {/* 通过 onSelectProject 属性将选择事件传递给 NavBarWithSelect */}
+        <NavBarWithSelect title="ManageYourProject--项目规划" onSelectProject={handleSelectProject} />
       </Grid>
       {/* 主要内容 */}
-      <Grid item container spacing={2}>
+      <Grid item container xs={12} spacing={2}/>
         {/* 第一列：侧边栏 */}
         <Grid 
-        item
-        container
-        justifyContent="center"
-        alignItems="flex-start"
-        xs={2}>
+          item
+          container
+          justifyContent="center"
+          alignItems="flex-start"
+          xs={2}>
           <SideBar/>
         </Grid>
         {/* 第二列：信息展示框和图表 */}
-        <Grid item container xs={7} direction="column" spacing={2} >
+        <Grid item container xs={6} direction="column" spacing={2} >
            {/* 图表 */}
           <Grid item container justifyContent="center" alignContent="center">
-            <PieChart/>
+            <BasicPie />
           </Grid>
             {/* 项目信息展示框 */}
           <Grid item>
-            <InfoDisplay
-              label="项目信息"
-              line1="100001"
-              line2="项目负责人："
-              line3="项目起止日期："
-              line4="项目地址："
+             {/* 使用 selectedProjectInfo 来展示项目信息 */}
+             <InfoDisplay
+              line1={`项目编号： ${selectedProjectInfo ? selectedProjectInfo.id : ""}`}
+              line2={`项目负责人： ${selectedProjectInfo ? selectedProjectInfo.projectManager : ""}`}
+              line3={`项目起止日期： ${selectedProjectInfo ? selectedProjectInfo.startDate + " - " + selectedProjectInfo.endDate : ""}`}
+              line4={`项目地址： ${selectedProjectInfo ? selectedProjectInfo.address : ""}`}
             />
           </Grid>
         </Grid>
         {/* 第三列：时间轴 */}
-        <Grid item xs={3}>
-          <TimeLineWithAdd /> 
+        <Grid item container xs={4} alignItems="flex-start" direction="column">
+          <p>节点时间轴：</p>
+          <Grid item><TimeLineWithAdd />
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
   );
 }
