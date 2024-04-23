@@ -1,8 +1,5 @@
 import * as React from "react";
 import { Box, Paper } from "@mui/material";
-import SelectBox from "../components/SelectBox";
-import { projectlist } from "../constants/PROJECT_INFO.js";
-
 export default function InfoDisplay({
   line1,
   line2,
@@ -21,7 +18,6 @@ export default function InfoDisplay({
       }}
     >
       <Paper style={{ width: "100%", height: "100%", padding: "15px" }}>
-        <SelectBox  set={projectlist}/>
         <p>{line1}</p>
         <p>{line2}</p>
         <p>{line3}</p>

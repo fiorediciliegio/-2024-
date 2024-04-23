@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import NavBar from "../components/NavBar.jsx";
+import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
 import SideBar from "../components/SideBar.jsx";
 
 export default function SafetyPage() {
@@ -8,7 +8,7 @@ export default function SafetyPage() {
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBar title="ManageYourProject--安全监测"></NavBar>
+        <NavBarWithSelect title="ManageYourProject--安全监测"/>
       </Grid>
       <Grid item container spacing={2}>
         {/* 侧边栏 */}
