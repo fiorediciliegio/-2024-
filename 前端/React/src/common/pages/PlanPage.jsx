@@ -12,8 +12,8 @@ export default function PlanPage() {
 
   const handleSelectProject = async (project) => {
     try {
-      const response = await Axios.get(`your-backend-url/projects/${project}`);
-      setSelectedProjectInfo(response.data.projectInfo);
+      const response = await Axios.get(`http://47.123.7.53:8000/show_projects/${project}`);
+      setSelectedProjectInfo(response.data.projects_data);
     } catch (error) {
       console.error("Error fetching project information:", error);
     }
@@ -24,10 +24,12 @@ export default function PlanPage() {
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
         {/* 通过 onSelectProject 属性将选择事件传递给 NavBarWithSelect */}
-        <NavBarWithSelect title="ManageYourProject--项目规划" onSelectProject={handleSelectProject} />
+        <NavBarWithSelect 
+        title="ManageYourProject--项目规划" 
+        onSelectProject={handleSelectProject} />
       </Grid>
       {/* 主要内容 */}
-      <Grid item container xs={12} spacing={2}/>
+      <Grid item container xs={12} spacing={2}>
         {/* 第一列：侧边栏 */}
         <Grid 
           item
@@ -47,19 +49,21 @@ export default function PlanPage() {
           <Grid item>
              {/* 使用 selectedProjectInfo 来展示项目信息 */}
              <InfoDisplay
-              line1={`项目编号： ${selectedProjectInfo ? selectedProjectInfo.id : ""}`}
-              line2={`项目负责人： ${selectedProjectInfo ? selectedProjectInfo.projectManager : ""}`}
-              line3={`项目起止日期： ${selectedProjectInfo ? selectedProjectInfo.startDate + " - " + selectedProjectInfo.endDate : ""}`}
-              line4={`项目地址： ${selectedProjectInfo ? selectedProjectInfo.address : ""}`}
+              line1={`项目编号： ${selectedProjectInfo ? selectedProjectInfo.pjnumber : ""}`}
+              line2={`项目负责人： ${selectedProjectInfo ? selectedProjectInfo.pjmanager : ""}`}
+              line3={`项目起止日期： ${selectedProjectInfo ? selectedProjectInfo.pjstart_date + " 至 " + selectedProjectInfo.pjend_date : ""}`}
+              line4={`项目地址： ${selectedProjectInfo ? selectedProjectInfo.pjaddress : ""}`}
             />
           </Grid>
         </Grid>
         {/* 第三列：时间轴 */}
         <Grid item container xs={4} alignItems="flex-start" direction="column">
           <p>节点时间轴：</p>
-          <Grid item><TimeLineWithAdd />
+          <Grid item>
+            <TimeLineWithAdd />
           </Grid>
         </Grid>
       </Grid>
+    </Grid>
   );
 }
