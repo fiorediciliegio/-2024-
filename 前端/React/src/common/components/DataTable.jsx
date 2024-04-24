@@ -25,7 +25,7 @@ export default function DataTable() {
 
   useEffect(() => {
     axios
-      .get("http://47.123.7.53:8000/return_project_info/")
+      .get("http://47.123.7.53:8000/show_project/")
       .then((res) => {
         const extractedData = res.data.map(item => ({
           pjname: item.pjname,

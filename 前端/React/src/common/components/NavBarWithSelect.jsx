@@ -21,7 +21,7 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 export default function NavBarWithSelect({ title, onSelectProject  }) {
 
   /*向后端发送请求获得项目列表 */
-  const [projects, setProjects] = useState([]);
+  const [projectList, setProjectList] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
 
   useEffect(() => {
@@ -30,10 +30,10 @@ export default function NavBarWithSelect({ title, onSelectProject  }) {
 
   const fetchProjects = async () => {
     try {
-      const response = await Axios.get("your-backend-url/projects");/*url*/
-      setProjects(response.data.projects);/*这里projects是后端发送json对象的名称*/
+      const response = await Axios.get("http://47.123.7.53:8000/show_project/");
+      setProjectList(response.data.projects_data);
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      console.error("Error fetching projectList:", error);
     }
   };
 
@@ -93,9 +93,9 @@ export default function NavBarWithSelect({ title, onSelectProject  }) {
                   variant="standard" 
                   value={selectedProject}
                   onChange={handleProjectChange}>
-                    {projects.map((project) => (
-                      <MenuItem key={project.id} value={project.name}>
-                        {project.name}{/* 这里id 和 name对应json里的命名*/}
+                    {projectList.map((item) => (
+                      <MenuItem key={item.id} value={item.pjname}>
+                        {item.pjname}{/* 这里id 和 name对应json里的命名*/}
                       </MenuItem>
                     ))}
                   </TextField>
