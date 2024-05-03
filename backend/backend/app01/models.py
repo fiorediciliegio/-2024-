@@ -1,7 +1,7 @@
 from django.db import models
-# 定义项目表
 
 
+# 项目表
 class Project(models.Model):
     NUM_Project = models.CharField(verbose_name='项目编号', max_length=100)
     NAME_Project = models.CharField(verbose_name='项目名称', max_length=50)
@@ -13,12 +13,14 @@ class Project(models.Model):
     DESC_Project = models.CharField(verbose_name='项目描述', max_length=1000)
     id = models.AutoField(primary_key=True)
     MANA_Project = models.CharField(verbose_name='项目负责人', max_length=20)
-
-    Currency_Unit = (
-        (1, "USD"),
-        (2, "CNY"),
-        (3, "EUR"),
-        (4, "JPY"),
-        (5, "BTC")
-    )
     CUR_Project = models.CharField(verbose_name='货币单位', max_length=50)
+
+
+# 项目节点表
+class ProjectNode(models.Model):
+    id = models.AutoField(primary_key=True)
+    NAME_Milestone = models.CharField(max_length=100)
+    DDL_Milestone = models.DateField()
+    DES_Milestone = models.CharField(max_length=1000, null=True, blank=True)
+    PHEN_Milestone = models.CharField(max_length=10)
+    ID_Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='nodes')

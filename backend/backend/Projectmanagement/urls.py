@@ -23,13 +23,33 @@ from app01.views import project_add
 # ]
 
 urlpatterns = [
-    path('project/list/', views.project_list),
 
+
+    #项目列表显示
+    path('show_projects/<str:project>/', views.project_list, name='show_projects_detail'),
+
+
+    #增加项目
     path('project/add/', views.project_add),
 
-    path('test/', views.test),
 
+    #删除项目
     path('project/delete/', views.project_delete),
+
+
+    #项目节点显示
+    path('projectnode/list/', views.projectnode_list),
+
+
+    #添加项目节点
+    path('projectnode/add/', views.projectnode_add),
+
+
+    #删除项目节点
+    path('projectnode/delete/', views.projectnode_delete),
+
+
+    path('test/', views.test),
 
     path('project/edit/', views.project_edit),
     
