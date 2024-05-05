@@ -16,4 +16,26 @@ export const personroles = [
       label: "会计人员",
     },
   ];
+
+  export const percolumns = [
+    { id: "pername", 
+    label: "姓名", 
+    minWidth: 170 },
+    {
+      id:'pernumber',
+      label: "人员编号",
+      minWidth: 170,
+      format: (value) => value.toLocaleString("en-US"),
+    },
+    {
+      id: "perrole",
+      label: "职位",
+      minWidth: 170,
+    },
+    {
+      id: "permail",
+      label: "邮箱",
+      minWidth: 170,
+    },
+  ];
   

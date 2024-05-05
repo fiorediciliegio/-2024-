@@ -6,47 +6,60 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { pjcolumns } from "../constants/PROJECT_INFO.js";
+import { percolumns } from "../constants/PERSON_INFO.js";
+import SearchBox from "./SearchBox.jsx";
 
-export default function DataTable() {
-
-  const [projectInfo, setprojectInfo] = useState(0); 
+export default function PersonTable({projectName}) {
+  const [searchQuery, setSearchQuery] = useState(""); // 用于保存搜索词
+  const [personInfo, setpersonInfo] = useState(0); 
   const [rowsPerPage, setRowsPerPage] = useState(10); 
   const [rows, setRows] = useState([]);
 
-  const handleChangePage = (event, newPage) => {
-    setprojectInfo(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setprojectInfo(0); 
-  };
-
+  //发送请求到后端获得数据
   useEffect(() => {
     axios
-      .get("http://47.123.7.53:8000/show_project/")
+      .get(`http://47.123.7.53:8000/show_person/${projectName}/`)
       .then((res) => {
         const extractedData = res.data.map(item => ({
-          pjname: item.pjname,
-          pjnumber: item.pjnumber,
-          pjtype:item.pjtype,
-          pjmanager: item.pjmanager
+          pername: item.pername,
+          pernumber: item.pernumber,
+          permail:item.permail,
+          perrole: item.perrole
         }));
         setRows(extractedData);
       })
       .catch((error) => {
         console.error("Error fetching data from server", error);
       });
-  }, []);
+  }, [projectName]);
+
+  const handleChangePage = (event, newPage) => {
+    setpersonInfo(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setpersonInfo(0); 
+  };
+
+  // 过滤人员信息
+  const filteredRows = rows.filter(row =>
+    row.pername.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Paper sx={{ width: "90%", overflow: "hidden", padding: "20px" }}>
+      {/* 搜索框 */}
+      <SearchBox
+        label="搜索人员名称..." 
+        value={searchQuery} 
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="project table">
           <thead>
             <TableRow>
-              {pjcolumns.map((column) => (
+              {percolumns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
@@ -58,12 +71,16 @@ export default function DataTable() {
             </TableRow>
           </thead>
           <tbody>
-            {rows
-              .slice(projectInfo * rowsPerPage, projectInfo * rowsPerPage + rowsPerPage)
+              {filteredRows
+              .slice(personInfo * rowsPerPage, personInfo * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {pjcolumns.map((column) => {
+                  <TableRow 
+                  hover 
+                  role="checkbox" 
+                  tabIndex={-1} 
+                  key={row.code}>
+                    {percolumns.map((column) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
@@ -84,7 +101,7 @@ export default function DataTable() {
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
-        page={projectInfo}
+        page={personInfo}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />

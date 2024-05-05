@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { Grid, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Radio, RadioGroup, FormControlLabel, IconButton } from "@mui/material";
 import { Timeline } from "antd";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -7,7 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs'; // 导入 dayjs 库
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-const TimeLineWithAdd = () => {
+export default function TimeLineWithAdd ({pjID}) {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false); // 控制对话框的打开和关闭
   const [newEvent, setNewEvent] = useState("");
@@ -15,6 +16,28 @@ const TimeLineWithAdd = () => {
   const [newEventDate, setNewEventDate] = useState(null);
   const [newEventStatus, setNewEventStatus] = useState("未处理"); // 默认状态为 "未处理"
 
+//获取节点列表
+  useEffect(() => {
+    if (!pjID) return; // 如果没有 pjID，则不发送请求
+
+    axios
+    .get(`http://47.123.7.53:8000/projectnode/list/${pjID}/`)
+    .then((res) => {
+      const eventData = res.data.map(item => ({
+        eventname: item.pjn_name,
+        eventdescription: item.pjn_des,
+        eventdate:item.pjn_ddl,
+        eventstatus: item.pjn_status
+      }));
+      setEvents(eventData);
+    })
+    .catch((error) => {
+      console.error("Error fetching events:", error);
+    });
+}, [{pjID}]);
+
+
+  //打开创建节点弹窗
   const handleOpenDialog = () => {
     setOpen(true);
   };
@@ -27,8 +50,8 @@ const TimeLineWithAdd = () => {
     setNewEventDate(null);
     setNewEventStatus("未处理");
   };
-
-  const handleSaveEvent = () => {
+  //新建节点
+  const handleSaveEvent= async () => {
     if (
       newEvent.trim() === "" ||
       newEventDescription.trim() === "" ||
@@ -36,18 +59,22 @@ const TimeLineWithAdd = () => {
     ) {
       return;
     }
-
-    // 将 newEventDate 转换为标准的 JavaScript 日期对象
-    const dateObject = dayjs(newEventDate).toDate();
-
-    const updatedEvents = [
-      ...events,
-      { event: newEvent, description: newEventDescription, date: dateObject, status: newEventStatus },
-    ];
-    // Sort events by date
-    updatedEvents.sort((a, b) => a.date.valueOf() - b.date.valueOf());
-    setEvents(updatedEvents);
-    handleCloseDialog();
+    try {
+      const response = await axios.post('http://47.123.7.53:8000/projectnode/add/', { // 发送POST请求将新创建的节点信息发送到后端
+        pjn_name: newEvent,
+        pjn_des: newEventDescription,
+        pjn_ddl: newEventDate,
+        pjn_status: newEventStatus,
+        pj_id:pjID,
+      });
+      const updatedEvents = [...events, response.data]; // 将新创建的节点信息添加到时间轴数据中
+      // 对事件按照日期排序
+      updatedEvents.sort((a, b) => dayjs(a.eventdate).valueOf() - dayjs(b.eventdate).valueOf());
+      setEvents(updatedEvents);
+      handleCloseDialog();
+    } catch (error) {
+      console.error('Error saving event:', error);
+    }
   };
 
   return (
@@ -60,12 +87,12 @@ const TimeLineWithAdd = () => {
       <Grid item container>
         <Timeline>
           {events.map((event, index) => (
-            <Timeline.Item key={index}>
-              <p>{event.event}</p>
-              <p>{event.description}</p>
-              <p>{dayjs(event.date).format('YYYY-MM-DD')}</p> {/* 使用 dayjs 格式化日期 */}
-              <p>Status: {event.status}</p> {/* 显示状态 */}
-            </Timeline.Item>
+            <items key={index}>
+              <p>{event.eventname}</p>
+              <p>{event.eventdescription}</p>
+              <p>{dayjs(event.eventdate).format('YYYY-MM-DD')}</p> {/* 使用 dayjs 格式化日期 */}
+              <p>Status: {event.eventstatus}</p> {/* 显示状态 */}
+            </items>
           ))}
         </Timeline>
       </Grid>
@@ -122,4 +149,3 @@ const TimeLineWithAdd = () => {
   );
 };
 
-export default TimeLineWithAdd;

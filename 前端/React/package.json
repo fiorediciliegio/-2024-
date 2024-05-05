@@ -22,7 +22,7 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -53,5 +53,5 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
-  "proxy":"http://47.123.7.53"
+  "proxy": "http://47.123.7.53"
 }

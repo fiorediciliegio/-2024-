@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Grid,Box } from "@mui/material";
-import moment from "moment";
-import { DatePicker } from 'antd';
+import React, { useState } from "react";
+import { Box, Grid, TextField } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
 
-export default function TimePicker({ label, value, onChange }) {
-  const [selectedDate, setSelectedDate] = useState(
-    value ? moment(value) : null,
-  );
+const TimePicker = ({ label, value, onChange }) => {
+  const [selectedDate, setSelectedDate] = useState(value ? dayjs(value).toDate() : null);
 
-  useEffect(() => {
-    setSelectedDate(value ? moment(value) : null);
-  }, [value]);
-
-  const handleDateChange = (date, dateString) => {
+  const handleDateChange = (date) => {
+    const dateString = date ? dayjs(date).format("YYYY-MM-DD") : "";
     setSelectedDate(date);
     onChange(dateString);
   };
@@ -39,13 +36,18 @@ export default function TimePicker({ label, value, onChange }) {
           }}
           noValidate
           autoComplete="off"
-        >      
-        <DatePicker  
-          value={selectedDate}
-          onChange={handleDateChange}
-        />
-      </Box>
+        >
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={selectedDate}
+              onChange={handleDateChange}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        </Box>
       </Grid>
     </Grid>
   );
-}
+};
+
+export default TimePicker;

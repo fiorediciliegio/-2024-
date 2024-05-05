@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import axios from "axios";
 import {
   AppBar,
   Box,
@@ -18,30 +18,37 @@ import HomeIcon from "@mui/icons-material/Home";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export default function NavBarWithSelect({ title, onSelectProject  }) {
+export default function NavBarWithSelect({ title, onSelectProject, defaultSelectedProject   }) {
 
   /*向后端发送请求获得项目列表 */
   const [projectList, setProjectList] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedProject, setSelectedProject] = useState(defaultSelectedProject || ""); // 设置默认选中的项目名称
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
   const fetchProjects = async () => {
-    try {
-      const response = await Axios.get("http://47.123.7.53:8000/show_project/");
-      setProjectList(response.data.projects_data);
-    } catch (error) {
-      console.error("Error fetching projectList:", error);
-    }
+    axios
+    .get("http://47.123.7.53:8000/show_project/")
+    .then((res) => {
+      const extractedData = res.data.map(item => ({
+        pjname: item.pjname,
+        pjid:item.pjid
+      }));
+      setProjectList(extractedData);
+    })
+    .catch((error) => {
+      console.error("Error fetching data from server", error);
+    });
   };
-
+  
   const handleProjectChange = (event) => {
-    const project = event.target.value;
-    setSelectedProject(project);
+    const project = event.target.value; // 从事件对象中获取选择的项目值
+    setSelectedProject(project); // 更新所选项目的值
     onSelectProject(project); // 通知父组件所选项目
   };
+
   /*用户账户的下拉菜单*/
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -94,8 +101,8 @@ export default function NavBarWithSelect({ title, onSelectProject  }) {
                   value={selectedProject}
                   onChange={handleProjectChange}>
                     {projectList.map((item) => (
-                      <MenuItem key={item.id} value={item.pjname}>
-                        {item.pjname}{/* 这里id 和 name对应json里的命名*/}
+                      <MenuItem key={item.pjid} value={item.pjname}>
+                        {item.pjname}
                       </MenuItem>
                     ))}
                   </TextField>

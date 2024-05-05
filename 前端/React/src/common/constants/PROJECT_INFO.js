@@ -22,13 +22,13 @@ export const projecttype = [
   ];
   
   export const pjcolumns = [
-    { id: "pjname", /*对应 后端返回数据的属性名 */
+    { id: "pjname", 
     label: "项目名称", 
     minWidth: 170 },
     {
       id:'pjnumber',
       label: "项目编号",
-      minWidth: 100,
+      minWidth: 170,
       format: (value) => value.toLocaleString("en-US"),
     },
     {
@@ -43,22 +43,4 @@ export const projecttype = [
     },
   ];
   
-  export const projectlist = [
-    {
-      label: "第一个项目",
-      value: "第一个项目",
-    },
-    {
-      label: "第二个项目",
-      value: "第二个项目",
-    },
-    {
-      label: "第三个项目",
-      value: "第三个项目",
-    },
-    {
-      label: "第四个项目",
-      value: "第四个项目",
-    },
-  ];
-  
+ 
