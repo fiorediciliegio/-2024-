@@ -1,13 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
-import SearchBox from "../components/SearchBox.jsx";
 import OpenButton from "../components/OpenButton.jsx";
 import SideBar from "../components/SideBar.jsx";
 import NavBar from "../components/NavBar.jsx";
 import CreatePj from "./CreatePj.jsx";
-import DataTable from "../components/DataTable.jsx";
+import ProjectTable from "../components/ProjectTable.jsx";
 
 export default function MainPage() {
+  const navigate = useNavigate();
+  const handleRowClick = (url) => {
+    navigate(url);
+  };
+  //管理弹窗
   const [isCreatePjOpen, setIsCreatePjOpen] = useState(false);
   const openCreatePj = () => {
     setIsCreatePjOpen(true);
@@ -32,31 +37,15 @@ export default function MainPage() {
         >
           <SideBar></SideBar>
         </Grid>
-        <Grid item container xs={10}>
-          {/* 搜索框 还没写搜索功能 */}
-          <Grid
-            item
-            container
-            justifyContent="flex-start"
-            alignItems="center"
-            xs={8}
-          >
-            <SearchBox label="Search Project..."></SearchBox>
-          </Grid>
+        <Grid item container xs={10} spacing={2} justifyContent="flex-end" alignItems="center">
           {/* 新建项目按钮 */}
-          <Grid
-            item
-            container
-            justifyContent="center"
-            alignItems="center"
-            xs={4}
-          >
+          <Grid item  sx={{ marginRight: '100px' }}>
             <OpenButton onClick={openCreatePj} children="新建项目"></OpenButton>
             {isCreatePjOpen && <CreatePj onClose={closeCreatePj} />}
           </Grid>
-          {/* 数据表格 待写*/}
+          {/* 数据表格 */}
           <Grid item xs={12}>
-            <DataTable/>
+            <ProjectTable onRowClick={handleRowClick}/>
           </Grid>
         </Grid>
       </Grid>

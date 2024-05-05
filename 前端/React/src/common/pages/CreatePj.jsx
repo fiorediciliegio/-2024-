@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
 import axios from "axios";
-import { Grid, Dialog, DialogTitle, DialogContent, DialogActions, Button, Paper} from "@mui/material";
+import { Grid } from "@mui/material";
 import InputBox from "../components/InputBox.jsx";
 import SelectBox from "../components/SelectBox.jsx";
 import InputBoxML from "../components/InputBoxML.jsx";
@@ -10,6 +11,7 @@ import TimePicker from "../components/TimePicker.jsx";
 import { currencies } from "../constants/UNIT.js";
 import { projecttype } from "../constants/PROJECT_INFO.js";
 
+Modal.setAppElement("#root");
 
 export default function CreatePj({ onClose }) {
   const [projectInfo, setProjectInfo] = useState({
@@ -54,105 +56,104 @@ export default function CreatePj({ onClose }) {
   };
 
   return (
-    <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
-        <DialogTitle>
-          <TopBar title="创建项目" close={onClose} />
-        </DialogTitle>
-        <DialogContent>
+      <Modal
+        isOpen={true}
+        onRequestClose={onClose}
+        style={{ content: { width: "60%", height: "90%", margin: "auto" } }}
+      >
+        <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+          {/* 顶部栏，显示页面标题，并提供关闭按钮 */}
+          <TopBar title="创建项目" close={onClose}></TopBar>
+          {/* 使用 Grid 容器来创建两列布局 */}
           <Grid
             container
-            direction="row"
             justifyContent="center"
             alignItems="flex-start"
+            spacing={2} // 添加间距
+            style={{ margin: "10px" }}
           >
-            <Grid
-              item
-              container
-              xs={6}
-              direction="column"
-              justifyContent="flex-start"
-            >
-              {/* InputBox 组件，用于输入项目名称 */}
-              <InputBox
-                label="项目名称"
-                value={projectInfo.pjname}
-                onChange={(event) => handleChange(event, "pjname")}
-              ></InputBox>
-              <InputBox
-                label="项目编号"
-                value={projectInfo.pjnumber}
-                onChange={(event) => handleChange(event, "pjnumber")}
-              ></InputBox>
-              <InputBox
-                label="项目负责人"
-                value={projectInfo.pjmanager}
-                onChange={(event) => handleChange(event, "pjmanager")}
-              ></InputBox>
-              {/* SelectBox 组件，用于选择项目类型 */}
-              <SelectBox
-                width={"25ch"}
-                set={projecttype}
-                label="项目类型"
-                value={projectInfo.pjtype}
-                onChange={(event) => handleChange(event, "pjtype")}
-              ></SelectBox>
-              <Grid item container>
-                <Grid item container xs={10}>
-                  <InputBox
-                    label="项目价值"
-                    value={projectInfo.pjvalue}
-                    onChange={(event) => handleChange(event, "pjvalue")}
-                  ></InputBox>
-                </Grid>
-                <Grid item container xs={2}>
-                  <SelectBox
-                    width={"7ch"}
-                    set={currencies}
-                    label="货币"
-                    value={projectInfo.pjcurrency}
-                    onChange={(event) => handleChange(event, "pjcurrency")}
-                  ></SelectBox>
+            {/* 第一列 */}
+            <Grid item xs={6}>
+              <Grid container direction="column" spacing={2}>
+                {/* InputBox 组件，用于输入项目名称 */}
+                <InputBox
+                  label="项目名称"
+                  value={projectInfo.pjname}
+                  onChange={(event) => handleChange(event, "pjname")}
+                />
+                <InputBox
+                  label="项目编号"
+                  value={projectInfo.pjnumber}
+                  onChange={(event) => handleChange(event, "pjnumber")}
+                />
+                <InputBox
+                  label="项目负责人"
+                  value={projectInfo.pjmanager}
+                  onChange={(event) => handleChange(event, "pjmanager")}
+                />
+                {/* SelectBox 组件，用于选择项目类型 */}
+                <SelectBox
+                  set={projecttype}
+                  label="项目类型"
+                  value={projectInfo.pjtype}
+                  onChange={(event) => handleChange(event, "pjtype")}
+                  width="25ch"
+                />
+                {/* 项目价值和货币选择框放在同一行 */}
+                <Grid container direction="row" >
+                  <Grid item >
+                    <InputBox
+                      label="项目价值"
+                      value={projectInfo.pjvalue}
+                      onChange={(event) => handleChange(event, "pjvalue")}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <SelectBox
+                      set={currencies}
+                      label="货币"
+                      value={projectInfo.pjcurrency}
+                      onChange={(event) => handleChange(event, "pjcurrency")}
+                      width="10ch"
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              xs={6}
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-              {/* TimePicker 组件，用于选择项目开始时间 */}
-              <TimePicker
-                label="项目开始时间"
-                value={projectInfo.pjstart_date}
-                onChange={(event) => handleChange(event, "pjstart_date")}
-              ></TimePicker>
-              <TimePicker
-                label="项目结束时间"
-                value={projectInfo.pjend_date}
-                onChange={(event) => handleChange(event, "pjend_date")}
-              ></TimePicker>
-              <InputBoxML
-                label="项目地址"
-                value={projectInfo.pjaddress}
-                onChange={(event) => handleChange(event, "pjaddress")}
-              ></InputBoxML>
-              <InputBoxML
-                label="项目描述"
-                value={projectInfo.pjdescription}
-                onChange={(event) => handleChange(event, "pjdescription")}
-              ></InputBoxML>
+            {/* 第二列 */}
+              <Grid item container direction="column" xs={6} spacing={2}>
+                {/* TimePicker 组件，用于选择项目开始时间 */}
+                <Grid item>
+                <TimePicker
+                  label="项目开始时间"
+                  value={projectInfo.pjstart_date}
+                  onChange={(event) => handleChange(event, "pjstart_date")}
+                /></Grid>
+                <Grid item>
+                <TimePicker
+                  label="项目结束时间"
+                  value={projectInfo.pjend_date}
+                  onChange={(event) => handleChange(event, "pjend_date")}
+                /></Grid>
+                <Grid item>
+                <InputBoxML
+                  label="项目地址"
+                  value={projectInfo.pjaddress}
+                  onChange={(event) => handleChange(event, "pjaddress")}
+                /></Grid>
+                <Grid item>
+                <InputBoxML
+                  label="项目描述"
+                  value={projectInfo.pjdescription}
+                  onChange={(event) => handleChange(event, "pjdescription")}
+                /></Grid>
+                {/* SaveButton 组件，用于保存项目信息 */}
+                <Grid item container justifyContent="center"
+                alignItems="center">
+                <SaveButton children="保存" onClick={handleSubmit} /></Grid>
+              </Grid>
             </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} color="secondary">
-            取消
-          </Button>
-          <SaveButton children="保存" onClick={handleSubmit}/>
-        </DialogActions>
-    </Dialog>
+        </div>
+      </Modal>
   );
 }

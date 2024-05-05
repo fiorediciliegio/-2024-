@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, TextField } from "@mui/material";
 
-export default function SearchBox({ label }) {
+export default function SearchBox({ label,value,onChange }) {
   return (
     <Box
       sx={{
@@ -11,7 +11,7 @@ export default function SearchBox({ label }) {
         zIndex: 0, 
       }}
     >
-      <TextField fullWidth label={label} id="search"/>
+      <TextField fullWidth label={label} id="search" value={value} onChange={onChange}/>
     </Box>
   );
 }

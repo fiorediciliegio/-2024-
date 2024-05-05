@@ -5,6 +5,8 @@ export default function InfoDisplay({
   line2,
   line3,
   line4,
+  line5,
+  line6
 }) {
   return (
     <Box
@@ -22,6 +24,8 @@ export default function InfoDisplay({
         <p>{line2}</p>
         <p>{line3}</p>
         <p>{line4}</p>
+        <p>{line5}</p>
+        <p>{line6}</p>
       </Paper>
     </Box>
   );
