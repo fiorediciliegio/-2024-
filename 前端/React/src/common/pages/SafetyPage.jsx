@@ -1,14 +1,17 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
+import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
+import { useSearchParams } from "react-router-dom";
 
 export default function SafetyPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectName = searchParams.get("projectName");
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBarWithSelect title="ManageYourProject--安全监测"/>
+        <NavBarRO title="ManageYourProject--安全监测" projectName={projectName}/>
       </Grid>
       <Grid item container spacing={2}>
         {/* 侧边栏 */}
@@ -19,7 +22,7 @@ export default function SafetyPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar></SideBar>
+          <SideBar projectName={projectName}></SideBar>
         </Grid>
         <Grid item container xs={10}>
           <></>

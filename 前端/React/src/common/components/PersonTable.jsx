@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import { percolumns } from "../constants/PERSON_INFO.js";
 import SearchBox from "./SearchBox.jsx";
 
-export default function PersonTable({projectName}) {
+export default function PersonTable() {
   const [searchQuery, setSearchQuery] = useState(""); // 用于保存搜索词
   const [personInfo, setpersonInfo] = useState(0); 
   const [rowsPerPage, setRowsPerPage] = useState(10); 
@@ -18,7 +18,7 @@ export default function PersonTable({projectName}) {
   //发送请求到后端获得数据
   useEffect(() => {
     axios
-      .get(`http://47.123.7.53:8000/show_person/${projectName}/`)
+      .get(`http://47.123.7.53:8000/show_person/`)
       .then((res) => {
         const extractedData = res.data.map(item => ({
           pername: item.pername,
@@ -31,7 +31,7 @@ export default function PersonTable({projectName}) {
       .catch((error) => {
         console.error("Error fetching data from server", error);
       });
-  }, [projectName]);
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setpersonInfo(newPage);

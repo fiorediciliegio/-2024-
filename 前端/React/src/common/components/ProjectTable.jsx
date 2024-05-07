@@ -8,14 +8,16 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { pjcolumns } from "../constants/PROJECT_INFO.js";
 import SearchBox from "./SearchBox.jsx";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 export default function ProjectTable({ onRowClick }) {
   const [searchQuery, setSearchQuery] = useState(""); 
   const [projectInfo, setprojectInfo] = useState(0); 
   const [rowsPerPage, setRowsPerPage] = useState(10); 
   const [rows, setRows] = useState([]);
-  const [deleteConfirmation, setDeleteConfirmation] = useState(false); // 控制删除确认弹窗显示
   const [deleteId, setDeleteId] = useState(null); // 用于存储要删除的项目 ID
+  const [anchorEl, setAnchorEl] = useState(null); // Anchor element for the menu
 
   //发送请求到后端获得数据
   useEffect(() => {
@@ -50,34 +52,33 @@ export default function ProjectTable({ onRowClick }) {
     onRowClick(`/PlanPage?projectName=${encodeURIComponent(pjname)}`);
   };
 
-  //右击删除
-  const handleRightClick = (e, pjname, pjid) => {
-    e.preventDefault();
-    // 显示删除确认弹窗
-    setDeleteConfirmation(true);
-    // 存储要删除的项目 ID
-    setDeleteId(pjid);
+  // Open menu
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
   };
-  const handleDeleteConfirmation = () => {
+
+  // Close menu
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Handle delete
+  const handleDelete = () => {
+    console.log("delete:", deleteId); // 打印删除项目的 id 信息
     // 发送删除请求
     axios
-      .post(`http://47.123.7.53:8000/project/delete/`, { pjid: deleteId })
-      .then((res) => {
+      .post("http://47.123.7.53:8000/project/delete/", { pjid: deleteId })
+      .then(() => {
         // 删除成功后更新前端项目列表
         setRows(rows.filter(row => row.pjid !== deleteId));
-        // 隐藏删除确认弹窗
-        setDeleteConfirmation(false);
+        // 关闭菜单
+        handleMenuClose();
       })
       .catch((error) => {
         console.error("Error deleting project", error);
-        // 隐藏删除确认弹窗
-        setDeleteConfirmation(false);
+        // 关闭菜单
+        handleMenuClose();
       });
-  };
-
-  const handleCancelDelete = () => {
-    // 隐藏删除确认弹窗
-    setDeleteConfirmation(false);
   };
 
   // 过滤项目信息
@@ -119,7 +120,11 @@ export default function ProjectTable({ onRowClick }) {
                   tabIndex={-1} 
                   key={row.code}
                   onClick={() => handleRowClick(row.pjname)}
-                  onContextMenu={(e) => handleRightClick(e, row.pjname, row.pjid)}>
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setDeleteId(row.pjid);
+                    handleMenuOpen(e);
+                  }}>
                     {pjcolumns.map((column) => {
                       // 排除 id 字段
                       if (column.id !== 'pjid') {
@@ -150,13 +155,13 @@ export default function ProjectTable({ onRowClick }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
        {/* 删除确认弹窗 */}
-       {deleteConfirmation && (
-        <div>
-          <p>确定要删除吗？</p>
-          <button onClick={handleDeleteConfirmation}>确定</button>
-          <button onClick={handleCancelDelete}>取消</button>
-        </div>
-      )}
+       <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleDelete}>删除项目</MenuItem>
+      </Menu>
     </Paper>
   );
 }

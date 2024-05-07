@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import OpenButton from "../components/OpenButton.jsx";
-import SideBar from "../components/SideBar.jsx";
 import NavBar from "../components/NavBar.jsx";
-import CreatePj from "./CreatePj.jsx";
+import CreatePerson from "../pages/CreatePerson.jsx";
+import CreatePj from "../pages/CreatePj.jsx";
 import ProjectTable from "../components/ProjectTable.jsx";
+import PersonTable from "../components/PersonTable.jsx";
 
 export default function MainPage() {
   const navigate = useNavigate();
   const handleRowClick = (url) => {
     navigate(url);
   };
-  //管理弹窗
+  //管理新建项目弹窗
   const [isCreatePjOpen, setIsCreatePjOpen] = useState(false);
   const openCreatePj = () => {
     setIsCreatePjOpen(true);
@@ -20,32 +21,47 @@ export default function MainPage() {
   const closeCreatePj = () => {
     setIsCreatePjOpen(false);
   };
+    //管理新建人员弹窗
+  const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
+  const openCreatePerson = () => {
+    setIsCreatePersonOpen(true);
+  };
+  const closeCreatePerson = () => {
+    setIsCreatePersonOpen(false);
+  };
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
-      <Grid item xs={12}>
+      <Grid item xs={12} spacing={2}>
         <NavBar title="ManageYourProject"></NavBar>
       </Grid>
-      <Grid item container spacing={2}>
-        {/* 侧边栏 */}
+      <Grid item container spacing={2} margin={2}>
+        <Grid item container xs={9} spacing={2} justifyContent="flex-end" alignItems="center">        
+          {/* 项目表格 */}
+          <Grid item xs={12}>
+            <ProjectTable onRowClick={handleRowClick}/>
+          </Grid>
+          {/*人员表格 */}
+          <Grid item xs={12}>
+            <PersonTable />
+          </Grid>
+        </Grid>
         <Grid
           item
           container
           justifyContent="center"
           alignItems="flex-start"
-          xs={2}
+          xs={3}
         >
-          <SideBar></SideBar>
-        </Grid>
-        <Grid item container xs={10} spacing={2} justifyContent="flex-end" alignItems="center">
-          {/* 新建项目按钮 */}
+          {/* 新建项目按钮 */}  
           <Grid item  sx={{ marginRight: '100px' }}>
             <OpenButton onClick={openCreatePj} children="新建项目"></OpenButton>
             {isCreatePjOpen && <CreatePj onClose={closeCreatePj} />}
           </Grid>
-          {/* 数据表格 */}
-          <Grid item xs={12}>
-            <ProjectTable onRowClick={handleRowClick}/>
+           {/* 添加人员按钮 */}
+           <Grid item  sx={{ marginRight: '100px' }}>
+            <OpenButton onClick={openCreatePerson} children="添加人员"></OpenButton>
+            {isCreatePersonOpen && <CreatePerson onClose={closeCreatePerson} />}
           </Grid>
         </Grid>
       </Grid>

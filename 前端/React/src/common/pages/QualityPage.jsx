@@ -1,14 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
-import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
+import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
+import Axios from "axios";
+import { useSearchParams,useNavigate } from "react-router-dom";
 
 export default function QualityPage() {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectName = searchParams.get("projectName");
+  const [qualityInfo, setQualityInfo] = useState(null);
+
+  const handleSelectProject = async (project) => {
+    try {
+      const response = await Axios.get(`http://47.123.7.53:8000/show_quality/${project}/`);
+      setQualityInfo(response.data.projects_data);
+       // 更新路由参数
+       navigate(`?projectName=${project}`);
+    } catch (error) {
+      console.error("Error fetching quality:", error);
+    }
+  };
+  
+  useEffect(() => {
+    if (projectName) {
+      // 如果路由参数中存在项目名称，则调用 handleSelectProject 获取项目信息
+      handleSelectProject(projectName);
+    }
+  }, [projectName]); // 仅在 projectName 发生变化时执行 useEffect
+
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBarWithSelect title="ManageYourProject--质量监测"/>
+        <NavBarRO
+              title="ManageYourProject--质量监测"
+              projectName={projectName}
+            />
       </Grid>
       <Grid item container spacing={2}>
         {/* 侧边栏 */}
@@ -19,7 +47,7 @@ export default function QualityPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar></SideBar>
+          <SideBar projectName={projectName}></SideBar>
         </Grid>
         <Grid item container xs={10}>
           <></>

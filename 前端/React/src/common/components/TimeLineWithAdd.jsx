@@ -5,7 +5,7 @@ import { Timeline } from "antd";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs'; // 导入 dayjs 库
+import dayjs from 'dayjs'; 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export default function TimeLineWithAdd ({pjID}) {
@@ -16,26 +16,35 @@ export default function TimeLineWithAdd ({pjID}) {
   const [newEventDate, setNewEventDate] = useState(null);
   const [newEventStatus, setNewEventStatus] = useState("未处理"); // 默认状态为 "未处理"
 
-//获取节点列表
+  //获取节点列表
   useEffect(() => {
-    if (!pjID) return; // 如果没有 pjID，则不发送请求
+    fetchEvents(); 
+  }, [pjID]);
+
+  const fetchEvents = () => {
+    if (!pjID) return;
 
     axios
-    .get(`http://47.123.7.53:8000/projectnode/list/${pjID}/`)
-    .then((res) => {
-      const eventData = res.data.map(item => ({
-        eventname: item.pjn_name,
-        eventdescription: item.pjn_des,
-        eventdate:item.pjn_ddl,
-        eventstatus: item.pjn_status
-      }));
-      setEvents(eventData);
-    })
-    .catch((error) => {
-      console.error("Error fetching events:", error);
-    });
-}, [{pjID}]);
-
+      .get(`http://47.123.7.53:8000/projectnode/list/${pjID}/`)
+      .then((res) => {
+        if (res.data && res.data.project_nodes) {
+          const eventData = res.data.project_nodes.map((node) => ({
+            eventname: node.pjn_name,
+            eventdescription: node.pjn_des,
+            eventdate: dayjs(node.pjn_ddl),
+            eventstatus: node.pjn_status,
+          }));
+          // 对事件按照日期进行排序
+          eventData.sort((a, b) => a.eventdate - b.eventdate);
+          setEvents(eventData);
+        } else {
+          console.error("Invalid response data:", res.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+      });
+  };
 
   //打开创建节点弹窗
   const handleOpenDialog = () => {
@@ -49,9 +58,12 @@ export default function TimeLineWithAdd ({pjID}) {
     setNewEventDescription("");
     setNewEventDate(null);
     setNewEventStatus("未处理");
+      // 关闭对话框后重新获取节点列表
+    fetchEvents();
   };
-  //新建节点
-  const handleSaveEvent= async () => {
+
+  // 新建节点
+  const handleSaveEvent = async () => {
     if (
       newEvent.trim() === "" ||
       newEventDescription.trim() === "" ||
@@ -59,24 +71,24 @@ export default function TimeLineWithAdd ({pjID}) {
     ) {
       return;
     }
+    const newEventData = {
+      pjn_name: newEvent,
+      pjn_des: newEventDescription,
+      pjn_ddl: dayjs(newEventDate).format('YYYY-MM-DD'), // 格式化日期为 'YYYY-MM-DD'
+      pjn_status: newEventStatus,
+      pj_id: pjID,
+    };
     try {
-      const response = await axios.post('http://47.123.7.53:8000/projectnode/add/', { // 发送POST请求将新创建的节点信息发送到后端
-        pjn_name: newEvent,
-        pjn_des: newEventDescription,
-        pjn_ddl: newEventDate,
-        pjn_status: newEventStatus,
-        pj_id:pjID,
-      });
-      const updatedEvents = [...events, response.data]; // 将新创建的节点信息添加到时间轴数据中
-      // 对事件按照日期排序
-      updatedEvents.sort((a, b) => dayjs(a.eventdate).valueOf() - dayjs(b.eventdate).valueOf());
-      setEvents(updatedEvents);
+      await axios.post(
+        "http://47.123.7.53:8000/projectnode/add/",
+        newEventData
+      );
       handleCloseDialog();
+      fetchEvents(); 
     } catch (error) {
-      console.error('Error saving event:', error);
+      console.error("Error saving event:", error);
     }
   };
-
   return (
     <Grid
       container
@@ -87,12 +99,12 @@ export default function TimeLineWithAdd ({pjID}) {
       <Grid item container>
         <Timeline>
           {events.map((event, index) => (
-            <items key={index}>
+            <item key={index}>
               <p>{event.eventname}</p>
               <p>{event.eventdescription}</p>
               <p>{dayjs(event.eventdate).format('YYYY-MM-DD')}</p> {/* 使用 dayjs 格式化日期 */}
               <p>Status: {event.eventstatus}</p> {/* 显示状态 */}
-            </items>
+            </item>
           ))}
         </Timeline>
       </Grid>
@@ -125,7 +137,8 @@ export default function TimeLineWithAdd ({pjID}) {
             <DatePicker
               value={newEventDate}
               onChange={(date) => setNewEventDate(date)}
-              renderInput={(params) => <TextField {...params} size="small" fullWidth margin="normal" />}
+              renderInput={(params) => <TextField {...params} size="small" fullWidth margin="normal" 
+              inputFormat="yyyy-MM-dd"/>}
             />
           </LocalizationProvider>
           <RadioGroup
