@@ -38,9 +38,6 @@ export default function CreatePj({ onClose }) {
       setProjectInfo({ ...projectInfo, [fieldName]: fieldValue });
     }
   };
-  useEffect(() => {
-    console.log(projectInfo);
-  }, [projectInfo]);
 
   // 用于提交表单数据到后端API保存项目信息
   const handleSubmit = async () => {

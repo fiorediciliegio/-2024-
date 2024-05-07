@@ -1,30 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import SideBar from "../components/SideBar.jsx";
-import NavBarWithSelect from "../components/NavBarWithSelect.jsx";
-import OpenButton from "../components/OpenButton.jsx";
-import CreatePerson from "../pages/CreatePerson.jsx";
-import PersonTable from "../components/PersonTable.jsx"
+import NavBarRO from "../components/NavBarRO.jsx";
+import Axios from "axios";
+import { useSearchParams,useNavigate } from "react-router-dom";
 
 export default function PersonnelPage() {
-  const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
-  const [selectedProjectName, setSelectedProjectName] = useState(""); // 新增状态来存储所选项目的名称
-  
-  const openCreatePerson = () => {
-    setIsCreatePersonOpen(true);
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const projectName = searchParams.get("projectName");
+  const [pjPerInfo, setPjPerInfo] = useState(null);
+
+  const handleSelectProject = async (project) => {
+    try {
+      const response = await Axios.get(`http://47.123.7.53:8000/show_PersoninPj/${project}/`);
+      setPjPerInfo(response.data.projects_data);
+       // 更新路由参数
+       navigate(`?projectName=${project}`);
+    } catch (error) {
+      console.error("Error fetching person in project:", error);
+    }
   };
-  const closeCreatePerson = () => {
-    setIsCreatePersonOpen(false);
-  };
-  const handleProjectSelect = (projectName) => {
-    setSelectedProjectName(projectName); // 更新所选项目的名称
-  };
+
+  useEffect(() => {
+    if (projectName) {
+      // 如果路由参数中存在项目名称，则调用 handleSelectProject 获取项目信息
+      handleSelectProject(projectName);
+    }
+  }, [projectName]); // 仅在 projectName 发生变化时执行 useEffect
 
   return (
     <Grid container spacing={2}>
       {/*顶部导航栏 */}
       <Grid item xs={12}>
-        <NavBarWithSelect title="ManageYourProject--人力资源" onSelectProject={handleProjectSelect}/>
+          <NavBarRO
+            title="ManageYourProject--人力资源"
+            projectName={projectName}
+          />
       </Grid>
       <Grid item container spacing={2}>
         {/*侧边栏 */}
@@ -35,23 +47,11 @@ export default function PersonnelPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar></SideBar>
+          <SideBar projectName={projectName}/>
         </Grid>
         <Grid item container xs={10} spacing={2} justifyContent="flex-end" alignItems="center">
-          {/* 添加人员按钮 */}
-          <Grid item  sx={{ marginRight: '100px' }}>
-            <OpenButton
-              onClick={openCreatePerson}
-              children="添加人员"
-            ></OpenButton>
-            {isCreatePersonOpen && <CreatePerson onClose={closeCreatePerson} projectName={selectedProjectName}/>}
-          </Grid>
-           {/* 数据表格 */}
-           <Grid item xs={12}>
-            <PersonTable/>
-          </Grid>
+        </Grid>
         </Grid>
       </Grid>
-    </Grid>
   );
 }

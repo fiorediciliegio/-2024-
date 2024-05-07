@@ -4,16 +4,24 @@ export const personroles = [
       label: "项目经理",
     },
     {
-      value: "施工人员",
-      label: "施工人员",
+      value: "工程师",
+      label: "工程师",
     },
     {
-      value: "监理人员",
-      label: "监理人员",
+      value: "施工员",
+      label: "施工员",
+    }, 
+    {
+      value: "财务人员",
+      label: "财务人员",
     },
     {
-      value: "会计人员",
-      label: "会计人员",
+      value: "安全主管",
+      label: "安全主管",
+    },
+    {
+      value: "质量控制员",
+      label: "质量控制员",
     },
   ];
 

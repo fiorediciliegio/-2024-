@@ -1,87 +1,38 @@
 import * as React from "react";
 import { Button, ButtonGroup, Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const buttons1 = [
-  <Button
-    key="one"
-    onClick={() => {
-      window.open("/PlanPage", "_self");
-    }}
-  >
-    项目规划
-  </Button>,
-  <Button
-    key="two"
-    onClick={() => {
-      window.open("/PersonnelPage", "_self");
-    }}
-  >
-    人力资源
-  </Button>,
-  <Button
-    key="three"
-    onClick={() => {
-      window.open("/CostPage", "_self");
-    }}
-  >
-    成本控制
-  </Button>,
-  <Button
-    key="four"
-    onClick={() => {
-      window.open("/QualityPage", "_self");
-    }}
-  >
-    质量监测
-  </Button>,
-  <Button
-    key="five"
-    onClick={() => {
-      window.open("/SafetyPage", "_self");
-    }}
-  >
-    安全监测
-  </Button>,
+  { key: "one", text: "项目规划", route: "/PlanPage" },
+  { key: "two", text: "人力资源", route: "/PersonnelPage" },
+  { key: "three", text: "成本控制", route: "/CostPage" },
+  { key: "four", text: "质量监测", route: "/QualityPage" },
+  { key: "five", text: "安全监测", route: "/SafetyPage" },
 ];
 const buttons2 = [
-  <Button
-    key="6-1"
-    onClick={() => {
-      window.open("/Document", "_self");
-    }}
-  >
-    文档
-  </Button>,
-  <Button
-    key="6-2"
-    onClick={() => {
-      window.open("/Drawing", "_self");
-    }}
-  >
-    图纸
-  </Button>,
-  <Button
-    key="6-3" // 修正键值为 "6-3"
-    onClick={() => {
-      window.open("/Photo", "_self");
-    }}
-  >
-    照片
-  </Button>,
+  { key: "6-1", text: "文档", route: "/Document" },
+  { key: "6-2", text: "图纸", route: "/Drawing" },
+  { key: "6-3", text: "照片", route: "/Photo" },
 ];
 
-export default function SideBar() {
+export default function SideBar({projectName}) {
+  const navigate = useNavigate();
+
+  const handleClick = (route) => {
+    // 导航到目标页面，传递相同的路由参数
+    navigate(`${route}?projectName=${projectName}`);
+  };
+
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column", // 修改为垂直方向布局
+        flexDirection: "column",
         "& > *": {
           m: 1,
         },
       }}
     >
-      {/* Management 标题 */}
       <Typography
         variant="h6"
         noWrap
@@ -95,7 +46,6 @@ export default function SideBar() {
       >
         Management
       </Typography>
-      {/* Management 按钮组 */}
       <ButtonGroup
         orientation="vertical"
         aria-label="Vertical button group"
@@ -104,15 +54,21 @@ export default function SideBar() {
         size="large"
         fullWidth
       >
-        {buttons1}
+        {buttons1.map((button) => (
+          <Button
+            key={button.key}
+            onClick={() => handleClick(button.route)}
+          >
+            {button.text}
+          </Button>
+        ))}
       </ButtonGroup>
-      {/* Archive 标题 */}
       <Typography
         variant="h6"
         noWrap
         component="span"
         sx={{
-          mt: 2, // 增加上边距
+          mt: 2,
           fontFamily: "monospace",
           fontWeight: 700,
           letterSpacing: ".3rem",
@@ -121,7 +77,6 @@ export default function SideBar() {
       >
         Archive
       </Typography>
-      {/* Archive 按钮组 */}
       <ButtonGroup
         orientation="vertical"
         aria-label="Vertical button group"
@@ -130,7 +85,14 @@ export default function SideBar() {
         size="large"
         fullWidth
       >
-        {buttons2}
+        {buttons2.map((button) => (
+          <Button
+            key={button.key}
+            onClick={() => handleClick(button.route)}
+          >
+            {button.text}
+          </Button>
+        ))}
       </ButtonGroup>
     </Box>
   );

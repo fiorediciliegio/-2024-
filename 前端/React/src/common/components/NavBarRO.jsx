@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
   AppBar,
   Box,
@@ -19,39 +18,9 @@ import HomeIcon from "@mui/icons-material/Home";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export default function NavBarWithSelect({ title, onSelectProject, defaultSelectedProject  }) {
-
-  /*向后端发送请求获得项目列表 */
-  const [projectList, setProjectList] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(defaultSelectedProject || ""); // 设置默认选中的项目名称
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
-    axios
-    .get("http://47.123.7.53:8000/show_project/")
-    .then((res) => {
-      const extractedData = res.data.map(item => ({
-        pjname: item.pjname,
-        pjid:item.pjid
-      }));
-      setProjectList(extractedData);
-    })
-    .catch((error) => {
-      console.error("Error fetching data from server", error);
-    });
-  };
-  
-  const handleProjectChange = (event) => {
-    const project = event.target.value; // 从事件对象中获取选择的项目值
-    setSelectedProject(project); // 更新所选项目的值
-    onSelectProject(project); // 通知父组件所选项目
-  };
-
+export default function NavBarRO({ title, projectName }) {
   /*用户账户的下拉菜单*/
-  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElUser, setAnchorElUser] =useState(null);
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -94,16 +63,13 @@ export default function NavBarWithSelect({ title, onSelectProject, defaultSelect
                     autoComplete="off"
                 >
                 <TextField  
-                  select
-                  label="选择项目" 
+                  label="*项目*" 
                   variant="standard" 
-                  value={selectedProject}
-                  onChange={handleProjectChange}>
-                    {projectList.map((item) => (
-                      <MenuItem key={item.pjid} value={item.pjname}>
-                        {item.pjname}
-                      </MenuItem>
-                    ))}
+                  value={projectName}
+                  InputProps={{
+                    readOnly: true,
+                  }}>
+                    {projectName}
                   </TextField>
                 </Box>
             </Grid>

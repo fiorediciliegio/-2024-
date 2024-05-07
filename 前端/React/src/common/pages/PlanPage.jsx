@@ -9,10 +9,10 @@ import Axios from "axios";
 import { useSearchParams,useNavigate } from "react-router-dom";
 
 export default function PlanPage() {
+  //获取项目信息
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
-
   const [selectedProjectInfo, setSelectedProjectInfo] = useState(null);
 
   const handleSelectProject = async (project) => {
@@ -32,7 +32,6 @@ export default function PlanPage() {
       handleSelectProject(projectName);
     }
   }, [projectName]); // 仅在 projectName 发生变化时执行 useEffect
-
 
   return (
     <Grid container spacing={2} >
@@ -63,13 +62,13 @@ export default function PlanPage() {
           justifyContent="center"
           alignItems="flex-start"
           xs={2}>
-          <SideBar/>
+          <SideBar projectName={projectName}/>
         </Grid>
         {/* 第二列：信息展示框和图表 */}
         <Grid item container xs={6} direction="column" spacing={2} >
            {/* 图表 */}
           <Grid item container justifyContent="center" alignContent="center">
-            <BasicPie />
+          <BasicPie pjID={selectedProjectInfo ? selectedProjectInfo.pjid : null}/>
           </Grid>
             {/* 项目信息展示框 */}
           <Grid item>

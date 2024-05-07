@@ -12,14 +12,13 @@ import { personroles } from "../constants/PERSON_INFO.js";
 
 Modal.setAppElement("#root");
 
-export default function CreatePerson({ onClose, projectName }) {
+export default function CreatePerson({ onClose}) {
   const [personInfo, setPersonInfo] = useState({
     pername: "",
     pernumber: "",
     perrole: "",
     permail: "",
     perdescription: "",
-    perproject: projectName, // 新增一个字段，保存项目名称
   });
   // 用于处理输入框和选择框值的变化
   const handleChange = (value, fieldName) => {
@@ -63,8 +62,6 @@ export default function CreatePerson({ onClose, projectName }) {
           >
           {/* 第一列 */}
             <Grid item container direction="column" spacing={2} xs={6}>
-               {/* 显示项目名称 */}
-               <ReadOnlyText label="所属项目" value={personInfo.perproject} ></ReadOnlyText>
               <InputBox
                 label="姓名"
                 value={personInfo.pername}
@@ -75,14 +72,14 @@ export default function CreatePerson({ onClose, projectName }) {
                 value={personInfo.pernumber}
                 onChange={(event) => handleChange(event, "pernumber")}
               />
-            </Grid>
-           {/* 第二列 */}
-            <Grid item container direction="column" xs={6} spacing={2}>
               <InputBox
                 label="邮箱"
                 value={personInfo.permail}
                 onChange={(event) => handleChange(event, "permail")}
               />
+            </Grid>
+           {/* 第二列 */}
+            <Grid item container direction="column" xs={6} spacing={2}>   
               <SelectBox
                 set={personroles}
                 label="职位"
