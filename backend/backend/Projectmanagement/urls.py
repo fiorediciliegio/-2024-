@@ -23,35 +23,48 @@ from app01.views import project_add
 # ]
 
 urlpatterns = [
-
-
-    #项目列表显示
-    path('show_projects/<str:project>/', views.project_list, name='show_projects_detail'),
-
-
-    #增加项目
+    #添加项目
     path('project/add/', views.project_add),
 
+    #项目列表显示
+    path('project/list/', views.project_list),
+
+    #单个项目信息显示
+    path('project/detail/<int:projectId>/', views.project_list, name='show_project_detail'),
 
     #删除项目
     path('project/delete/', views.project_delete),
 
-
     #项目节点显示
-    path('projectnode/list/', views.projectnode_list),
-
+    path('projectnode/list/<int:project_id>/', views.projectnode_list),
 
     #添加项目节点
     path('projectnode/add/', views.projectnode_add),
 
-
     #删除项目节点
     path('projectnode/delete/', views.projectnode_delete),
 
+    #统计项目节点状态
+    path('projectnode/collect/<int:project_id>/', views.projectnode_collect),
 
-    path('test/', views.test),
+    #更新项目节点状态
+    path('projectnode/update/phen/<int:node_id>/', views.projectnode_update_phen),
 
-    path('project/edit/', views.project_edit),
-    
-    path('create_project/', views.project_add),
+    #添加人员（总项目界面+单个项目界面）
+    path('person/add/', views.person_add),
+    path('person/add/project/<int:project_id>/', views.person_add_project),
+]
+    #人员列表显示
+    path('person/list/', views.person_list),
+
+    #单个人员人员信息显示
+    path('person/detail/<int:personId>/', views.person_list, name='show_person_detail'),
+
+    #删除人员
+    path('person/delete/', views.person_delete),
+
+
+    #上传文件
+    path('file/upload/', views.file_upload),
+
 ]
