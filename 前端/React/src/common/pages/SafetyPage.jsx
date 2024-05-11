@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 export default function SafetyPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
+  const projectId = searchParams.get("projectId");
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
@@ -22,7 +23,7 @@ export default function SafetyPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar projectName={projectName}></SideBar>
+          <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
         <Grid item container xs={10}>
           <></>

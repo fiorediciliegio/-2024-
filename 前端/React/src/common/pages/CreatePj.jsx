@@ -43,7 +43,7 @@ export default function CreatePj({ onClose }) {
   const handleSubmit = async () => {
     try {
       await axios.post(
-        "http://47.123.7.53:8000/create_project/",
+        "http://47.123.7.53:8000/project/add/",
         projectInfo,
       );
       onClose();
