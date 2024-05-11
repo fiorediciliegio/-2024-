@@ -7,6 +7,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs'; 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 
 export default function TimeLineWithAdd ({pjID}) {
   const [events, setEvents] = useState([]);
@@ -15,20 +19,23 @@ export default function TimeLineWithAdd ({pjID}) {
   const [newEventDescription, setNewEventDescription] = useState("");
   const [newEventDate, setNewEventDate] = useState(null);
   const [newEventStatus, setNewEventStatus] = useState("未处理"); // 默认状态为 "未处理"
-
+  const [anchorEl, setAnchorEl] = useState(null); // 菜单的锚元素
+  const [selectedNodeId, setSelectedNodeId] = useState(null); // 存储选择的节点ID
+  const [selectedNodeStatus, setSelectedNodeStatus] = useState(""); // 存储选择的节点ID
+  
   //获取节点列表
-  useEffect(() => {
+  useEffect(() => { 
     fetchEvents(); 
   }, [pjID]);
 
   const fetchEvents = () => {
     if (!pjID) return;
-
     axios
       .get(`http://47.123.7.53:8000/projectnode/list/${pjID}/`)
       .then((res) => {
         if (res.data && res.data.project_nodes) {
           const eventData = res.data.project_nodes.map((node) => ({
+            eventid:node.pjn_id,
             eventname: node.pjn_name,
             eventdescription: node.pjn_des,
             eventdate: dayjs(node.pjn_ddl),
@@ -50,7 +57,7 @@ export default function TimeLineWithAdd ({pjID}) {
   const handleOpenDialog = () => {
     setOpen(true);
   };
-
+  // 关闭创建节点弹窗
   const handleCloseDialog = () => {
     setOpen(false);
     // 清空输入框中的内容
@@ -61,7 +68,6 @@ export default function TimeLineWithAdd ({pjID}) {
       // 关闭对话框后重新获取节点列表
     fetchEvents();
   };
-
   // 新建节点
   const handleSaveEvent = async () => {
     if (
@@ -89,6 +95,45 @@ export default function TimeLineWithAdd ({pjID}) {
       console.error("Error saving event:", error);
     }
   };
+  // 打开菜单
+  const handleMenuOpen = (event, eventId, eventStatus) => {
+    setSelectedNodeId(eventId);
+    setSelectedNodeStatus(eventStatus);
+    setAnchorEl(event.currentTarget);
+  };
+
+  // 关闭菜单
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // 处理删除节点
+  const handleDelete = async () => {
+    console.log("deleteNodeId:", selectedNodeId); // 打印删除节点的 id 信息
+    try {
+      await axios.post("http://47.123.7.53:8000/projectnode/delete/", { pjn_id: selectedNodeId });
+      // 删除成功后重新获取事件列表
+      fetchEvents();
+    } catch (error) {
+      console.error("删除事件出错:", error);
+    }
+    // 关闭菜单
+    handleMenuClose();
+  };
+
+  // 处理修改节点
+  const handleStatusChange = (newStatus) => {
+    axios
+      .post(`http://47.123.7.53:8000/projectnode/update/phen/${selectedNodeId}/`, { new_pjn_status: newStatus })
+      .then(() => {
+        handleMenuClose();
+        fetchEvents(); 
+      })
+      .catch((error) => {
+        console.error("Error updating event status", error);
+        handleMenuClose();
+      });
+  };
   return (
     <Grid
       container
@@ -99,12 +144,15 @@ export default function TimeLineWithAdd ({pjID}) {
       <Grid item container>
         <Timeline>
           {events.map((event, index) => (
-            <item key={index}>
+            <items key={index}>
               <p>{event.eventname}</p>
               <p>{event.eventdescription}</p>
               <p>{dayjs(event.eventdate).format('YYYY-MM-DD')}</p> {/* 使用 dayjs 格式化日期 */}
               <p>Status: {event.eventstatus}</p> {/* 显示状态 */}
-            </item>
+              <IconButton onClick={(e) => handleMenuOpen(e, event.eventid, event.eventstatus)}>
+                <MoreVertIcon />
+              </IconButton>
+            </items>
           ))}
         </Timeline>
       </Grid>
@@ -158,6 +206,24 @@ export default function TimeLineWithAdd ({pjID}) {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* 菜单 */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+      {selectedNodeStatus === "未处理" && (
+        <MenuItem onClick={() => handleStatusChange("进行中")}>
+          标记为进行中
+        </MenuItem>
+      )}
+      {selectedNodeStatus === "进行中" && (
+        <MenuItem onClick={() => handleStatusChange("已完成")}>
+          标记为已完成
+        </MenuItem>
+      )}
+        <MenuItem onClick={handleDelete}>删除节点</MenuItem>
+      </Menu>
     </Grid>
   );
 };

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
+import StackBar from "../components/BarChartSt.jsx";
+import ReportList from "../components/ReportList.jsx";
 import Axios from "axios";
 import { useSearchParams,useNavigate } from "react-router-dom";
 
@@ -9,6 +11,7 @@ export default function QualityPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
+  const projectId = searchParams.get("projectId");
   const [qualityInfo, setQualityInfo] = useState(null);
 
   const handleSelectProject = async (project) => {
@@ -47,10 +50,17 @@ export default function QualityPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar projectName={projectName}></SideBar>
+          <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
-        <Grid item container xs={10}>
-          <></>
+        <Grid item container xs={10} spacing={2}>
+          {/*柱状图 */}
+          <Grid item container xs={5} spacing={2} justifyContent="flex-start" alignItems="flex-start">
+            <StackBar/>
+          </Grid>
+          {/*质量清单 */}
+          <Grid item container xs={7} spacing={2} justifyContent="flex-start" alignItems="flex-start">
+            <ReportList/>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

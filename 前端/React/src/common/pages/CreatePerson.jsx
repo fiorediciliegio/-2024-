@@ -34,7 +34,7 @@ export default function CreatePerson({ onClose}) {
   const handleSubmit = async () => {
      try {
       await axios.post(
-        "http://47.123.7.53:8000/create_person/",
+        "http://47.123.7.53:8000/person/add/",
         personInfo,
       );
       onClose();

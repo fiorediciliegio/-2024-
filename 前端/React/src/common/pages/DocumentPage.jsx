@@ -2,11 +2,13 @@ import React from "react";
 import { Grid } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
+import FileManager from "../components/FileManager.jsx";
 import { useSearchParams } from "react-router-dom";
 
 export default function DocumentPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
+  const projectId = searchParams.get("projectId");
   return (
     <Grid container spacing={2}>
       {/* 顶部导航栏 */}
@@ -22,10 +24,10 @@ export default function DocumentPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar projectName={projectName}></SideBar>
+          <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
         <Grid item container xs={10}>
-          <></>
+          <FileManager projectId={projectId}/>
         </Grid>
       </Grid>
     </Grid>

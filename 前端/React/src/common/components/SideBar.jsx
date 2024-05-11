@@ -15,12 +15,12 @@ const buttons2 = [
   { key: "6-3", text: "照片", route: "/Photo" },
 ];
 
-export default function SideBar({projectName}) {
+export default function SideBar({projectName, projectId}) {
   const navigate = useNavigate();
 
   const handleClick = (route) => {
     // 导航到目标页面，传递相同的路由参数
-    navigate(`${route}?projectName=${projectName}`);
+    navigate(`${route}?projectName=${projectName}&projectId=${projectId}`);
   };
 
   return (

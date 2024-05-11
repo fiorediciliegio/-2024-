@@ -23,7 +23,7 @@ export default function NavBarWithSelect({ title, onSelectProject, defaultSelect
 
   /*向后端发送请求获得项目列表 */
   const [projectList, setProjectList] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(defaultSelectedProject || ""); // 设置默认选中的项目名称
+  const [selectedProject, setSelectedProject] = useState(defaultSelectedProject || null); // 设置默认选中的项目名称
 
   useEffect(() => {
     fetchProjects();
@@ -31,7 +31,7 @@ export default function NavBarWithSelect({ title, onSelectProject, defaultSelect
 
   const fetchProjects = async () => {
     axios
-    .get("http://47.123.7.53:8000/show_project/")
+    .get("http://47.123.7.53:8000/project/list/")
     .then((res) => {
       const extractedData = res.data.map(item => ({
         pjname: item.pjname,
@@ -45,9 +45,10 @@ export default function NavBarWithSelect({ title, onSelectProject, defaultSelect
   };
   
   const handleProjectChange = (event) => {
-    const project = event.target.value; // 从事件对象中获取选择的项目值
-    setSelectedProject(project); // 更新所选项目的值
-    onSelectProject(project); // 通知父组件所选项目
+    const projectId = event.target.value; // 从事件对象中获取选择的项目值
+    const projectName = projectList.find(item => item.pjid === projectId)?.pjname; // 根据项目ID找到对应的项目名称
+    setSelectedProject(projectId); // 更新所选项目的值
+    onSelectProject(projectName, projectId); // 通知父组件所选项目
   };
 
   /*用户账户的下拉菜单*/
@@ -100,7 +101,7 @@ export default function NavBarWithSelect({ title, onSelectProject, defaultSelect
                   value={selectedProject}
                   onChange={handleProjectChange}>
                     {projectList.map((item) => (
-                      <MenuItem key={item.pjid} value={item.pjname}>
+                      <MenuItem key={item.pjid} value={item.pjid}>
                         {item.pjname}
                       </MenuItem>
                     ))}
