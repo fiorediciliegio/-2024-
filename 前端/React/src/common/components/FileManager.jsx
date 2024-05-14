@@ -14,7 +14,7 @@ export default function FileManager({projectId}) {
     const formData = new FormData();
     formData.append('file', file);
 
-    axios.post(`http://47.123.7.53:8000/document/upload/${projectId}`, formData)
+    axios.post(`http://47.123.7.53:8000/document/upload/${projectId}/`, formData)
       .then((response) => {
         setFiles([...files, file.name]);
       })
@@ -25,7 +25,7 @@ export default function FileManager({projectId}) {
 
   // 下载文件
   const handleDownload = (fileName) => {
-    axios.get(`http://47.123.7.53:8000/document/download/${fileName}`, {
+    axios.get(`http://47.123.7.53:8000/document/download/${fileName}/`, {
       responseType: 'blob',
     })
     .then((response) => {

@@ -68,7 +68,7 @@ export default function ChipSelectBox({projectId}) {
 
   return (
     <Grid container spacing={2}>
-      <Grid container xs={8} justifyContent="center" alignItems="center">
+      <Grid item container xs={8} justifyContent="center" alignItems="center">
         <FormControl sx={{ m: 1, width: 600 }}>
           <InputLabel id="demo-multiple-chip-label">选择人员</InputLabel>
           <Select
@@ -99,7 +99,7 @@ export default function ChipSelectBox({projectId}) {
           </Select>
         </FormControl>
       </Grid>
-      <Grid container xs={4}  justifyContent="flex-start" alignItems="center">
+      <Grid item container xs={4}  justifyContent="flex-start" alignItems="center">
         <SaveButton children={"添加人员"} onClick={handleSaveClick}></SaveButton>
       </Grid>
     </Grid>
