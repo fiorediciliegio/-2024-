@@ -229,7 +229,7 @@ def projectnode_update_phen(request, node_id=None):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            new_phen_milestone = data.get('PHEN_Milestone', None)
+            new_phen_milestone = data.get('new_pjn_status', None)
 
             if node_id is None or new_phen_milestone is None:
                 return JsonResponse({'error': 'Missing required parameters.'}, status=400)
@@ -303,14 +303,13 @@ def person_add_project(request, project_id=None):
         return JsonResponse({'error': 'Method not allowed.'}, status=405)
 
 
-# 显示人员列表
+# 显示人员列表（主界面）
 @api_view(['GET'])
 def person_list(request, personId=None):
-    """显示项目列表"""
     if request.method == 'GET':
         try:
             if personId:
-                # 如果提供了项目名称，则返回特定项目的信息
+                # 则返回特定人员的信息
                 person_info = models.Person.objects.get(id=personId)
                 return JsonResponse({'projects_data': {
                     'pername': person_info.NAME_Person,
@@ -341,6 +340,64 @@ def person_list(request, personId=None):
         return JsonResponse({"error": "Method not allowed"}, status=405)
 
 
+# 显示人员列表（单个项目界面）
+@api_view(['GET'])
+def person_project_list(request, project_id):
+    if request.method == 'GET':
+        try:
+            # 根据项目ID筛选人员列表
+            persons = Person.objects.filter(ID_Project=project_id)
+
+            # 构造人员数据
+            persons_data = []
+            for person in persons:
+                person_data = {
+                    'perid': person.id,
+                    'pername': person.NAME_Person,
+                    'pernumber': person.NUM_Person,
+                    'peremail': person.MAIL_Person,
+                    'perrole': person.POS_Person,
+                    'perdescription': person.DESC_Person
+                }
+                persons_data.append(person_data)
+
+            return JsonResponse(persons_data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed.'}, status=405)
+
+
+# 统计各职位人员数量（总界面+单项目界面）
+@api_view(['GET'])
+def person_collect(request, project_id=None):
+    if request.method == 'GET':
+        try:
+            # 定义要统计的职位列表
+            positions = ['项目经理', '工程师', '施工员', '财务人员', '安全主管', '质量控制员']
+
+            # 初始化统计结果字典
+            count_data = {}
+            for position in positions:
+                count_data[position] = 0
+
+            # 根据项目 ID 和职位进行筛选
+            if project_id:
+                persons = Person.objects.filter(ID_Project=project_id, POS_Person__in=positions)
+            else:
+                persons = Person.objects.filter(POS_Person__in=positions)
+
+            # 统计数量
+            for person in persons:
+                count_data[person.POS_Person] += 1
+
+            return JsonResponse(count_data)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
 # 删除人员
 @api_view(['POST'])
 def person_delete(request):
@@ -364,7 +421,7 @@ def person_delete(request):
 
 # 上传文件
 @api_view(['POST'])
-def file_upload(request):
+def file_upload(request, project_id=None):
     if request.method == 'POST' and request.FILES.get('file'):
         try:
             uploaded_file = request.FILES['file']
@@ -374,23 +431,15 @@ def file_upload(request):
             file_size = uploaded_file.size
             file_upload_time = datetime.datetime.now()
 
-            # 保存文件到数据库
-            file_instance = UploadedFile.objects.create(
+            # 存入数据
+            file_instance = File.objects.create(
                 file=uploaded_file,
                 name=file_name,
                 size=file_size,
                 file_format=file_extension,
-                upload_time=file_upload_time
+                upload_time=file_upload_time,
+                ID_Project_id=project_id
             )
-
-            return JsonResponse({
-                'message': 'File uploaded successfully.',
-                'file_id': file_instance.id,
-                'file_name': file_name,
-                'file_size': file_size,
-                'file_format': file_extension,
-                'upload_time': file_upload_time.strftime('%Y-%m-%d %H:%M:%S')
-            })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:

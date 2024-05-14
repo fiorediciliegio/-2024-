@@ -44,3 +44,4 @@ class File(models.Model):
     size = models.IntegerField()
     file_format = models.CharField(max_length=20)
     upload_time = models.DateTimeField(auto_now_add=True)
+    ID_Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='file')

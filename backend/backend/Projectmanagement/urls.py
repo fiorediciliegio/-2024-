@@ -53,18 +53,26 @@ urlpatterns = [
     #添加人员（总项目界面+单个项目界面）
     path('person/add/', views.person_add),
     path('person/add/project/<int:project_id>/', views.person_add_project),
-]
+
     #人员列表显示
     path('person/list/', views.person_list),
 
+    #人员列表显示（单个项目界面）
+    path('person/project/list/<int:project_id>/', views.person_project_list),
+
     #单个人员人员信息显示
-    path('person/detail/<int:personId>/', views.person_list, name='show_person_detail'),
+    path('person/detail/<int:personId>/', views.person_list),
+
+    #人员职位统计（总界面）
+    path('person/collect/', views.person_collect),
+
+    #人员职位统计（单个项目界面）
+    path('person/project/collect/<int:project_id>/', views.person_collect),
 
     #删除人员
     path('person/delete/', views.person_delete),
 
-
     #上传文件
-    path('file/upload/', views.file_upload),
+    path('document/upload/<int:project_id>/', views.file_upload),
 
 ]
