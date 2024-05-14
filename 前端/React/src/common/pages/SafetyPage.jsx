@@ -1,8 +1,8 @@
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
-import { useSearchParams } from "react-router-dom";
 
 export default function SafetyPage() {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,9 +1,10 @@
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 import { Grid } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
 import FileManager from "../components/FileManager.jsx";
-import { useSearchParams } from "react-router-dom";
+
 
 export default function DocumentPage() {
   const [searchParams, setSearchParams] = useSearchParams();

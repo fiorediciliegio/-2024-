@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Grid} from "@mui/material";
-import axios from "axios";
 import Modal from "react-modal";
+import axios from "axios";
+import { Grid} from "@mui/material";
 import InputBox from "../components/InputBox.jsx";
 import SelectBox from "../components/SelectBox.jsx";
 import InputBoxML from "../components/InputBoxML.jsx";
-import ReadOnlyText from "../components/ReadOnlyText.jsx";
 import TopBar from "../components/TopBar.jsx";
 import SaveButton from "../components/SaveButton.jsx";
 import { personroles } from "../constants/PERSON_INFO.js";
