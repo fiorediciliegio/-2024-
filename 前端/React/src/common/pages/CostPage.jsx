@@ -9,6 +9,7 @@ export default function CostPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
+  const projectId = searchParams.get("projectId");
   const [costInfo, setCostInfo] = useState(null);
 
   const handleSelectProject = async (project) => {
@@ -47,7 +48,7 @@ export default function CostPage() {
           alignItems="flex-start"
           xs={2}
         >
-          <SideBar projectName={projectName}></SideBar>
+          <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
         <Grid item container xs={10}>
           <></>

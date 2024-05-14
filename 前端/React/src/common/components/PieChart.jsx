@@ -8,7 +8,7 @@ export default function BasicPie({pjID}) {
 
   const getPiechartData = async () => {
     try{
-      const response = await axios.get(`http://47.123.7.53:8000/pjnode_piechart/${pjID}/`);
+      const response = await axios.get(`http://47.123.7.53:8000/projectnode/collect/${pjID}/`);
         setStatusData(response.data);
       }catch(error) {
       console.error("Error getting Piechart Status Data:", error);

@@ -22,7 +22,7 @@ export default function ProjectTable({ onRowClick }) {
   //发送请求到后端获得数据
   useEffect(() => {
     axios
-      .get("http://47.123.7.53:8000/show_project/")
+      .get("http://47.123.7.53:8000/project/list/")
       .then((res) => {
         const extractedData = res.data.map(item => ({
           pjname: item.pjname,
@@ -48,21 +48,20 @@ export default function ProjectTable({ onRowClick }) {
   };
 
   //点击跳转
-  const handleRowClick = (pjname) => {
-    onRowClick(`/PlanPage?projectName=${encodeURIComponent(pjname)}`);
+  const handleRowClick = (pjname,pjid) => {
+    onRowClick(`/PlanPage?projectName=${encodeURIComponent(pjname)}&projectId=${encodeURIComponent(pjid)}`);
   };
 
-  // Open menu
+  // 打开菜单
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  // Close menu
+  //关闭菜单
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
-  // Handle delete
+  
+  // 处理删除事件
   const handleDelete = () => {
     console.log("delete:", deleteId); // 打印删除项目的 id 信息
     // 发送删除请求
@@ -119,7 +118,7 @@ export default function ProjectTable({ onRowClick }) {
                   role="checkbox" 
                   tabIndex={-1} 
                   key={row.code}
-                  onClick={() => handleRowClick(row.pjname)}
+                  onClick={() => handleRowClick(row.pjname,row.pjid)}
                   onContextMenu={(e) => {
                     e.preventDefault();
                     setDeleteId(row.pjid);
