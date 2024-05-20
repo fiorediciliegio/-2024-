@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { Grid} from "@mui/material";
@@ -24,10 +24,6 @@ export default function CreatePerson({ onClose}) {
     let fieldValue = value.target.value;
     setPersonInfo({ ...personInfo, [fieldName]: fieldValue });
   };
-
-  useEffect(() => {
-    console.log(personInfo);
-  }, [personInfo]);
 
   // 用于提交表单数据到后端API保存项目信息
   const handleSubmit = async () => {
@@ -61,37 +57,43 @@ export default function CreatePerson({ onClose}) {
           >
           {/* 第一列 */}
             <Grid item container direction="column" spacing={2} xs={6}>
-              <InputBox
-                label="姓名"
-                value={personInfo.pername}
-                onChange={(event) => handleChange(event, "pername")}
-              />
-              <InputBox
-                label="编号"
-                value={personInfo.pernumber}
-                onChange={(event) => handleChange(event, "pernumber")}
-              />
-              <InputBox
-                label="邮箱"
-                value={personInfo.permail}
-                onChange={(event) => handleChange(event, "permail")}
-              />
+              <Grid item>
+                <InputBox
+                  label="姓名"
+                  value={personInfo.pername}
+                  onChange={(event) => handleChange(event, "pername")}
+                /></Grid>
+              <Grid item>
+                <InputBox
+                  label="编号"
+                  value={personInfo.pernumber}
+                  onChange={(event) => handleChange(event, "pernumber")}
+                /></Grid>
+              <Grid item>
+                <InputBox
+                  label="邮箱"
+                  value={personInfo.permail}
+                  onChange={(event) => handleChange(event, "permail")}
+                /></Grid>
             </Grid>
            {/* 第二列 */}
-            <Grid item container direction="column" xs={6} spacing={2}>   
-              <SelectBox
-                set={personroles}
-                label="职位"
-                value={personInfo.perrole}
-                onChange={(event) => handleChange(event, "perrole")}
-                width="25ch"
-              />
-              <InputBoxML
-                label="更多描述"
-                value={personInfo.perdescription}
-                onChange={(event) => handleChange(event, "perdescription")}
-              />
-              <SaveButton onClick={handleSubmit}>保存</SaveButton>
+            <Grid item container direction="column" xs={6} spacing={2}>
+              <Grid item>  
+                <SelectBox
+                  set={personroles}
+                  label="职位"
+                  value={personInfo.perrole}
+                  onChange={(event) => handleChange(event, "perrole")}
+                  width="25ch"
+                /></Grid> 
+              <Grid item>
+                <InputBoxML
+                  label="更多描述"
+                  value={personInfo.perdescription}
+                  onChange={(event) => handleChange(event, "perdescription")}
+                /></Grid>
+               <Grid item container justifyContent="center" alignItems="center">
+                <SaveButton onClick={handleSubmit} children={"保存"}/></Grid>
             </Grid>
           </Grid>
         </div>

@@ -13,9 +13,26 @@ export default function LoginPage() {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{
+        height: "100vh",
+        backgroundImage: `url('/bgpic2.jpg')`, 
+        backgroundPosition: 'center',
+        backgroundSize: "cover",
+      }}
+    >
       <Grid item xs={10} sm={6} md={4}>
-        <Paper elevation={3} style={{ padding: "20px", textAlign: "center" }}>
+        <Paper
+          elevation={3}
+          style={{
+            padding: "20px",
+            textAlign: "center",
+            backgroundColor: "rgba(250, 250, 250, 0.8)", // 半透明白色背景
+          }}
+        >
           <LockOutlinedIcon style={{ fontSize: "50px", marginBottom: "20px" }} />
           <Typography variant="h5" gutterBottom>
             ManageYourProject 登录

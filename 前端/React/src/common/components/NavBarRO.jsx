@@ -42,9 +42,8 @@ export default function NavBarRO({ title, projectName }) {
                 sx={{
                   mr: 2,
                   display: { xs: "none", md: "flex" },
-                  fontFamily: "monospace",
                   fontWeight: 700,
-                  letterSpacing: ".3rem",
+                  letterSpacing: ".1rem",
                   color: "inherit",
                   textDecoration: "none",
                 }}
