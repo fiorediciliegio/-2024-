@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import OpenButton from "../components/OpenButton.jsx";
 import NavBar from "../components/NavBar.jsx";
-import CreatePerson from "../pages/CreatePerson.jsx";
-import CreatePj from "../pages/CreatePj.jsx";
+import CreatePerson from "../popups/CreatePerson.jsx";
+import CreatePj from "../popups/CreatePj.jsx";
 import ProjectTable from "../components/ProjectTable.jsx";
 import PersonTable from "../components/PersonTable.jsx";
 

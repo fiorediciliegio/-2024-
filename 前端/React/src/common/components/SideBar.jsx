@@ -38,9 +38,8 @@ export default function SideBar({projectName, projectId}) {
         noWrap
         component="span"
         sx={{
-          fontFamily: "monospace",
-          fontWeight: 700,
-          letterSpacing: ".3rem",
+          fontWeight: 400,
+          letterSpacing: ".1rem",
           textDecoration: "none",
         }}
       >
@@ -69,9 +68,8 @@ export default function SideBar({projectName, projectId}) {
         component="span"
         sx={{
           mt: 2,
-          fontFamily: "monospace",
-          fontWeight: 700,
-          letterSpacing: ".3rem",
+          fontWeight: 400,
+          letterSpacing: ".1rem",
           textDecoration: "none",
         }}
       >

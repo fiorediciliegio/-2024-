@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { Grid } from "@mui/material";
@@ -29,11 +29,8 @@ export default function CreatePj({ onClose }) {
   // 用于处理输入框和选择框值的变化
   const handleChange = (value, fieldName) => {
     if (fieldName === "pjstart_date" || fieldName === "pjend_date") {
-      // Date values are string and don't need to be formatted
       setProjectInfo({ ...projectInfo, [fieldName]: value });
     } else {
-      // For non-date fields, your original logic can be maintained.
-      // Ensure that the value is retrieved correctly in the event handlers of these components.
       let fieldValue = value.target.value;
       setProjectInfo({ ...projectInfo, [fieldName]: fieldValue });
     }
@@ -73,38 +70,41 @@ export default function CreatePj({ onClose }) {
             <Grid item xs={6}>
               <Grid container direction="column" spacing={2}>
                 {/* InputBox 组件，用于输入项目名称 */}
-                <InputBox
-                  label="项目名称"
-                  value={projectInfo.pjname}
-                  onChange={(event) => handleChange(event, "pjname")}
-                />
-                <InputBox
-                  label="项目编号"
-                  value={projectInfo.pjnumber}
-                  onChange={(event) => handleChange(event, "pjnumber")}
-                />
-                <InputBox
-                  label="项目负责人"
-                  value={projectInfo.pjmanager}
-                  onChange={(event) => handleChange(event, "pjmanager")}
-                />
+                <Grid item>
+                  <InputBox
+                    label="项目名称"
+                    value={projectInfo.pjname}
+                    onChange={(event) => handleChange(event, "pjname")}
+                  /></Grid>
+                <Grid item>
+                  <InputBox
+                    label="项目编号"
+                    value={projectInfo.pjnumber}
+                    onChange={(event) => handleChange(event, "pjnumber")}
+                  /></Grid>
+                <Grid item>
+                  <InputBox
+                    label="项目负责人"
+                    value={projectInfo.pjmanager}
+                    onChange={(event) => handleChange(event, "pjmanager")}
+                  /></Grid>
                 {/* SelectBox 组件，用于选择项目类型 */}
-                <SelectBox
-                  set={projecttype}
-                  label="项目类型"
-                  value={projectInfo.pjtype}
-                  onChange={(event) => handleChange(event, "pjtype")}
-                  width="25ch"
-                />
+                <Grid item>
+                  <SelectBox
+                    set={projecttype}
+                    label="项目类型"
+                    value={projectInfo.pjtype}
+                    onChange={(event) => handleChange(event, "pjtype")}
+                    width="25ch"
+                  /></Grid>
                 {/* 项目价值和货币选择框放在同一行 */}
-                <Grid container direction="row" >
+                <Grid item container direction="row" >
                   <Grid item >
                     <InputBox
                       label="项目价值"
                       value={projectInfo.pjvalue}
                       onChange={(event) => handleChange(event, "pjvalue")}
-                    />
-                  </Grid>
+                    /></Grid>
                   <Grid item>
                     <SelectBox
                       set={currencies}
@@ -112,8 +112,7 @@ export default function CreatePj({ onClose }) {
                       value={projectInfo.pjcurrency}
                       onChange={(event) => handleChange(event, "pjcurrency")}
                       width="10ch"
-                    />
-                  </Grid>
+                    /></Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -121,33 +120,32 @@ export default function CreatePj({ onClose }) {
               <Grid item container direction="column" xs={6} spacing={2}>
                 {/* TimePicker 组件，用于选择项目开始时间 */}
                 <Grid item>
-                <TimePicker
-                  label="项目开始时间"
-                  value={projectInfo.pjstart_date}
-                  onChange={(event) => handleChange(event, "pjstart_date")}
-                /></Grid>
+                  <TimePicker
+                    label="项目开始时间"
+                    value={projectInfo.pjstart_date}
+                    onChange={(event) => handleChange(event, "pjstart_date")}
+                  /></Grid>
                 <Grid item>
-                <TimePicker
-                  label="项目结束时间"
-                  value={projectInfo.pjend_date}
-                  onChange={(event) => handleChange(event, "pjend_date")}
-                /></Grid>
+                  <TimePicker
+                    label="项目结束时间"
+                    value={projectInfo.pjend_date}
+                    onChange={(event) => handleChange(event, "pjend_date")}
+                  /></Grid>
                 <Grid item>
-                <InputBoxML
-                  label="项目地址"
-                  value={projectInfo.pjaddress}
-                  onChange={(event) => handleChange(event, "pjaddress")}
-                /></Grid>
+                  <InputBoxML
+                    label="项目地址"
+                    value={projectInfo.pjaddress}
+                    onChange={(event) => handleChange(event, "pjaddress")}
+                  /></Grid>
                 <Grid item>
-                <InputBoxML
-                  label="项目描述"
-                  value={projectInfo.pjdescription}
-                  onChange={(event) => handleChange(event, "pjdescription")}
-                /></Grid>
+                  <InputBoxML
+                    label="项目描述"
+                    value={projectInfo.pjdescription}
+                    onChange={(event) => handleChange(event, "pjdescription")}
+                  /></Grid>
                 {/* SaveButton 组件，用于保存项目信息 */}
-                <Grid item container justifyContent="center"
-                alignItems="center">
-                <SaveButton children="保存" onClick={handleSubmit} /></Grid>
+                <Grid item container justifyContent="center" alignItems="center">
+                  <SaveButton children="保存" onClick={handleSubmit} /></Grid>
               </Grid>
             </Grid>
         </div>
