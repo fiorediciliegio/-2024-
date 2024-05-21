@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
-import { Grid,TextField,IconButton } from "@mui/material";
+import { Grid,TextField,IconButton ,Typography} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import TopBar from "../components/TopBar.jsx";
@@ -61,11 +61,13 @@ export default function CreateQuaTem({onClose, projectId}){
                 /></Grid>
             {quaTemplate.subitems.map((subItem, index) => (
                 <Grid item container spacing={2} key={index} sx={{ marginBottom: 2 }}>
-                    <Grid item xs={1}>
-                        {/*这里补充子项目编号*/}
+                    <Grid item xs={1} alignContent="center" >
+                      {/*这里补充子项目编号*/}
+                      <Typography sx={{ textAlign: "center" }}>{index+1}</Typography>
                     </Grid>
                     <Grid item xs={5}>
                         <TextField
+                        multiline
                         label="检验项目"
                         fullWidth
                         value={subItem.name}
@@ -73,6 +75,7 @@ export default function CreateQuaTem({onClose, projectId}){
                         /></Grid>
                     <Grid item xs={5}>
                         <TextField
+                        multiline
                         label="规定值或允许偏差"
                         fullWidth
                         value={subItem.requirement}

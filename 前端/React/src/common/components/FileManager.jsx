@@ -1,18 +1,20 @@
 import React, { useState, useEffect} from 'react';
 import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, 
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Paper, Grid, Typography, Checkbox,Divider } from '@mui/material';
-import { CloudUpload, CloudDownload, Visibility, Close } from '@mui/icons-material';
+  Paper, Grid, Typography, Checkbox,  Snackbar } from '@mui/material';
+import { CloudUpload, CloudDownload, Visibility, Close, Delete } from '@mui/icons-material';
+import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
 
 export default function FileManager({ projectId }) {
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   // 获取已上传的文件列表
   useEffect(() => {
-    axios.get(`http://47.123.7.53:8000/document/list/${projectId}/`)
+    axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
       .then(response => {
         setFiles(response.data.files);
       })
@@ -21,18 +23,20 @@ export default function FileManager({ projectId }) {
       });
   }, [projectId]);
 
-  // 上传文件
+  // 上传文件(成功)
   const handleUpload = (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
 
-    axios.post(`http://47.123.7.53:8000/document/upload/${projectId}/`, formData)
+    axios.post(`http://47.123.7.53:8000/file/upload/${projectId}/`, formData)
       .then(() => {
         // 刷新文件列表
-        axios.get(`http://47.123.7.53:8000/document/list/${projectId}/`)
+        axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
           .then(response => {
             setFiles(response.data.files);
+            setSnackbarMessage('上传成功');
+            setOpenSnackbar(true);
           })
           .catch(error => {
             console.error('Error fetching file list:', error);
@@ -45,8 +49,10 @@ export default function FileManager({ projectId }) {
 
   // 下载文件
   const handleDownload = () => {
-    selectedFiles.forEach((fileName) => {
-      axios.get(`http://47.123.7.53:8000/document/download/${fileName}/`, {
+    selectedFiles.forEach((fileId) => {
+      const file = files.find(file => file.file_id === fileId);
+      const fileName = file ? file.file_name : fileId;
+      axios.get(`http://47.123.7.53:8000/file/download/${fileId}/`, {
         responseType: 'blob',
       })
         .then((response) => {
@@ -62,6 +68,26 @@ export default function FileManager({ projectId }) {
         });
     });
   };
+  // 删除文件
+  const handleDelete = () => {
+    selectedFiles.forEach((fileName) => {
+      axios.delete(`http://47.123.7.53:8000/file/delete/${fileName}/`)
+        .then(() => {
+          // 刷新文件列表
+          axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
+            .then(response => {
+              setFiles(response.data.files);
+              setSelectedFiles([]); // 清空已选文件
+            })
+            .catch(error => {
+              console.error('Error fetching file list:', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Error deleting file:', error);
+        });
+    });
+  };
 
   // 预览文件
   const handlePreview = () => {
@@ -74,18 +100,21 @@ export default function FileManager({ projectId }) {
   };
 
   // 处理复选框选择
-  const handleCheckboxChange = (fileName) => {
-    if (selectedFiles.includes(fileName)) {
-      setSelectedFiles(selectedFiles.filter((file) => file !== fileName));
+  const handleCheckboxChange = (fileId) => {
+    if (selectedFiles.includes(fileId)) {
+      setSelectedFiles(selectedFiles.filter((file) => file !== fileId));
     } else {
-      setSelectedFiles([...selectedFiles, fileName]);
+      setSelectedFiles([...selectedFiles, fileId]);
     }
+  };
+   // 关闭Snackbar
+   const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
     <div>
-      <Grid container spacing={3} alignItems="center">
-        <Grid item>
+      <Grid container spacing={2} >
           <input
             type="file"
             accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
@@ -93,15 +122,9 @@ export default function FileManager({ projectId }) {
             id="file-upload"
             onChange={handleUpload}
           />
-          <label htmlFor="file-upload">
-            <Button variant="contained" component="span" startIcon={<CloudUpload />}>
-              上传文件
-            </Button>
-          </label>
-        </Grid>
-        <Grid item xs>
+        <Grid item >
           <Typography variant="h6">文件列表</Typography>
-          <Paper elevation={3} style={{ maxHeight: 400,width:600, overflow: 'auto' }}>
+          <Paper elevation={3} style={{ maxHeight:500, width:600, overflow: 'auto' }} >
             <List>
               <ListItem>
                 <Checkbox
@@ -119,6 +142,7 @@ export default function FileManager({ projectId }) {
                 {/*文件操作button组 */}
                 <ListItemSecondaryAction>
                   <Grid container spacing={1} alignItems="center">
+                    {/*上传*/}
                     <Grid item>
                       <IconButton aria-label="upload" onClick={() => document.getElementById('file-upload').click()}>
                         <CloudUpload />
@@ -127,6 +151,7 @@ export default function FileManager({ projectId }) {
                     <Grid item>
                       <Typography variant="body2">上传</Typography>
                     </Grid>
+                    {/*预览*/}
                     <Grid item>
                       <IconButton aria-label="preview" onClick={handlePreview} disabled={selectedFiles.length === 0}>
                         <Visibility />
@@ -135,6 +160,7 @@ export default function FileManager({ projectId }) {
                     <Grid item>
                       <Typography variant="body2">预览</Typography>
                     </Grid>
+                    {/*下载*/}
                     <Grid item>
                       <IconButton aria-label="download" onClick={handleDownload} disabled={selectedFiles.length === 0}>
                         <CloudDownload />
@@ -143,16 +169,25 @@ export default function FileManager({ projectId }) {
                     <Grid item>
                       <Typography variant="body2">下载</Typography>
                     </Grid>
+                    {/*删除*/}
+                    <Grid item>
+                      <IconButton aria-label="delete" onClick={handleDelete} disabled={selectedFiles.length === 0}>
+                        <Delete />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2">删除</Typography>
+                    </Grid>
                   </Grid>
                 </ListItemSecondaryAction>
               </ListItem>
-              {files.map((file, index) => (
-                <ListItem key={index} divider>
+              {files.map((file) => (
+                <ListItem key={file.file_id} divider>
                   <Checkbox
-                    checked={selectedFiles.includes(file)}
-                    onChange={() => handleCheckboxChange(file)}
+                    checked={selectedFiles.includes(file.file_id)}
+                    onChange={() => handleCheckboxChange(file.file_id)}
                   />
-                  <ListItemText primary={file} />
+                  <ListItemText primary={`${file.file_name} ${file.file_format}`} secondary={file.upload_time}/>
                 </ListItem>
               ))}
             </List>
@@ -164,8 +199,13 @@ export default function FileManager({ projectId }) {
         <DialogTitle>预览文件</DialogTitle>
         <DialogContent>
           {/* 根据文件类型显示不同的预览组件 */}
-          {selectedFiles.map((fileName) => (
-            <embed key={fileName} src={`http://47.123.7.53:8000/document/${fileName}`} style={{ width: '100%', height: '500px', marginBottom: 10 }} />
+          {selectedFiles.map((fileId) => (
+            <iframe
+            key={fileId}
+            title={"文件预览"}
+            src={`http://47.123.7.53:8000/file/preview/${fileId}`}
+            style={{ width: '100%', height: '500px', marginBottom: 10 }}
+          />
           ))}
         </DialogContent>
         <DialogActions>
@@ -174,6 +214,11 @@ export default function FileManager({ projectId }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <MuiAlert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }

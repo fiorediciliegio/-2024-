@@ -21,22 +21,22 @@ const CreateQuality = ({ onClose }) => {
   useEffect(() => {
     fetchTemplates();
   }, []);
-
+  //获取模板列表，存储到templates中
   const fetchTemplates = async () => {
     const response = await axios.get('http://example.com/api/templates');
     setTemplates(response.data);
   };
-
+  //选择模板
   const handleTemplateChange = (e) => {
     const template = templates.find(t => t.id === e.target.value);
     setSelectedTemplate(template);
     setReport({ ...report, qrsubitems: template.subitems });
   };
-
+  //输入值
   const handleChange = (value, fieldName) => {
     setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
   };
-
+  //保存到后端
   const handleSubmit = async () => {
     try {
       await axios.post('http://example.com/api/reports', report);
@@ -53,7 +53,7 @@ const CreateQuality = ({ onClose }) => {
       style={{ content: { width: '60%', height: '90%', margin: 'auto' } }}
     >
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6">Create Quality Report</Typography>
+        <Typography variant="h6">新建质检报告</Typography>
         <TextField
           select
           label="Select Template"
@@ -65,7 +65,7 @@ const CreateQuality = ({ onClose }) => {
           }}
           sx={{ marginBottom: 2 }}
         >
-          <option value="" disabled>Select a template</option>
+          <option value="" disabled>选择模板</option>
           {templates.map((template) => (
             <option key={template.id} value={template.id}>
               {template.name}
