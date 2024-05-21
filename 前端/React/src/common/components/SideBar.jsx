@@ -10,9 +10,7 @@ const buttons1 = [
   { key: "five", text: "安全监测", route: "/SafetyPage" },
 ];
 const buttons2 = [
-  { key: "6-1", text: "文档", route: "/Document" },
-  { key: "6-2", text: "图纸", route: "/Drawing" },
-  { key: "6-3", text: "照片", route: "/Photo" },
+  { key: "6-1", text: "文件", route: "/File" },
 ];
 
 export default function SideBar({projectName, projectId}) {
