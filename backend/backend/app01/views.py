@@ -5,7 +5,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.utils.encoding import smart_str
 from .models import Project
 from .models import ProjectNode
 from .models import Person
@@ -13,7 +17,6 @@ from .models import File
 import os
 import json
 import datetime
-from datetime import datetime
 from django.db.models import Count
 
 
@@ -355,7 +358,7 @@ def person_project_list(request, project_id):
                     'perid': person.id,
                     'pername': person.NAME_Person,
                     'pernumber': person.NUM_Person,
-                    'peremail': person.MAIL_Person,
+                    'permail': person.MAIL_Person,
                     'perrole': person.POS_Person,
                     'perdescription': person.DESC_Person
                 }
@@ -431,6 +434,9 @@ def file_upload(request, project_id=None):
             file_size = uploaded_file.size
             file_upload_time = datetime.datetime.now()
 
+            # 获取项目实例
+            project_instance = Project.objects.get(id=project_id)
+
             # 存入数据
             file_instance = File.objects.create(
                 file=uploaded_file,
@@ -438,8 +444,100 @@ def file_upload(request, project_id=None):
                 size=file_size,
                 file_format=file_extension,
                 upload_time=file_upload_time,
-                ID_Project_id=project_id
+                ID_Project=project_instance  # 使用项目实例进行关联
             )
+            # 返回成功响应
+            return JsonResponse({'message': 'File uploaded successfully', 'file_id': file_instance.id}, status=201)
+        except Project.DoesNotExist:
+            return JsonResponse({'error': 'Project not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+# 文件列表显示（所有文件+单个项目）
+@api_view(['GET'])
+def file_list(request, project_id=None):
+    if request.method == 'GET':
+        try:
+            # 根据项目 ID 进行筛选文件列表
+            if project_id:
+                files = File.objects.filter(ID_Project=project_id)
+            else:
+                files = File.objects.all()
+
+            # 构造文件信息列表
+            files_data = []
+            for file in files:
+                file_data = {
+                    'file_id': file.id,
+                    'file_name': file.NAME_File,
+                    'file_size': file.SIZE_File,
+                    'file_format': file.FORM_File,
+                    'upload_time': file.UPTIME_File.strftime('%Y-%m-%d %H:%M:%S')
+                }
+                files_data.append(file_data)
+
+            return JsonResponse({'files': files_data})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+# 预览文件
+@api_view(['POST'])
+def file_preview(request):
+    if request.method == 'POST' and 'file_id' in request.data:
+        try:
+            file_id = request.data['file_id']
+            file_obj = File.objects.get(id=file_id)
+
+            # 获取文件路径
+            file_path = file_obj.FILE.path
+
+            # 读取文件内容
+            with default_storage.open(file_path, 'rb') as f:
+                file_content = f.read()
+
+            # 构造预览文件数据
+            preview_data = {
+                'file_name': file_obj.NAME_File,
+                'file_content': file_content,
+                'file_format': file_obj.FORM_File
+            }
+
+            return JsonResponse(preview_data)
+        except File.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+# 下载文件
+@api_view(['POST'])
+def file_download(request):
+    if request.method == 'POST' and 'file_id' in request.data:
+        try:
+            file_id = request.data['file_id']
+            file_obj = File.objects.get(id=file_id)
+            file_path = file_obj.FILE.path
+
+            # 打开文件
+            with default_storage.open(file_path, 'rb') as f:
+                file_content = f.read()
+
+            # 构建 HttpResponse 对象
+            response = HttpResponse(file_content, content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename=%s' % smart_str(file_obj.NAME_File)
+            response['Content-Length'] = os.path.getsize(file_path)
+
+            return response
+        except File.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     else:

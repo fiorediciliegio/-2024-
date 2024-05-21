@@ -39,9 +39,9 @@ class Person(models.Model):
 
 # 文件表
 class File(models.Model):
-    file = models.FileField(upload_to='uploads/')
-    name = models.CharField(max_length=255)
-    size = models.IntegerField()
-    file_format = models.CharField(max_length=20)
-    upload_time = models.DateTimeField(auto_now_add=True)
-    ID_Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='file')
+    FILE = models.FileField(upload_to='uploads/')
+    NAME_File = models.CharField(max_length=255)
+    SIZE_File = models.IntegerField()
+    FORM_File = models.CharField(max_length=20)
+    UPTIME_File = models.DateTimeField(auto_now_add=True)
+    ID_Project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='file', default=1)

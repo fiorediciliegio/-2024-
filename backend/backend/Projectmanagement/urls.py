@@ -75,4 +75,16 @@ urlpatterns = [
     #上传文件
     path('document/upload/<int:project_id>/', views.file_upload),
 
+    #展示所有文件列表（可以不用）
+    path('file/list/', views.file_list),
+
+    #展示单个项目文件列表
+    path('file/project/list/<int:project_id>/', views.file_list),
+
+    #预览文件
+    path('file/preview/', views.file_preview),
+
+    #下载文件
+    path('file/download/', views.file_download),
 ]
+
