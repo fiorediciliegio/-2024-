@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-05-26T08:12:33.574Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="KhqfIwl8JS5pP246tAeT" version="24.4.8" type="github">
+<mxfile host="app.diagrams.net" modified="2024-05-26T08:20:30.326Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="YZ7zrXAASIg7viqtkHPC" version="24.4.8" type="github">
   <diagram name="第 1 页" id="xPXLTHJ35o09CVX1dx4J">
     <mxGraphModel dx="1221" dy="699" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -87,6 +87,9 @@
             <mxPoint x="380" y="370" as="sourcePoint" />
             <mxPoint x="470" y="340" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="a9iE7syzfxpvLh4KcL6A-20" value="项目计划管理" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="10" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
