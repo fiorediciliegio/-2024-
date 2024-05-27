@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, 
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Paper, Grid, Typography, Checkbox,  Snackbar } from '@mui/material';
+  Paper, Grid, Typography, Checkbox,  Snackbar, TextField} from '@mui/material';
 import { CloudUpload, CloudDownload, Visibility, Close, Delete } from '@mui/icons-material';
 import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
@@ -12,6 +12,8 @@ export default function FileManager({ projectId }) {
   const [openPreview, setOpenPreview] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
   // 获取已上传的文件列表
   useEffect(() => {
     axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
@@ -51,7 +53,7 @@ export default function FileManager({ projectId }) {
   const handleDownload = () => {
     selectedFiles.forEach((fileId) => {
       const file = files.find(file => file.file_id === fileId);
-      const fileName = file ? file.file_name : fileId;
+      const fileName = file ? `${file.file_name}.${file.file_format}` : fileId;
       axios.get(`http://47.123.7.53:8000/file/download/${fileId}/`, {
         responseType: 'blob',
       })
@@ -62,16 +64,18 @@ export default function FileManager({ projectId }) {
           link.setAttribute('download', fileName);
           document.body.appendChild(link);
           link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
         })
         .catch((error) => {
-          console.error('Error downloading file:', error);
+          console.error('error downloading file:', error);
         });
     });
   };
   // 删除文件
   const handleDelete = () => {
-    selectedFiles.forEach((fileName) => {
-      axios.delete(`http://47.123.7.53:8000/file/delete/${fileName}/`)
+    selectedFiles.forEach((fileId) => {
+      axios.post("http://47.123.7.53:8000/file/delete/",{file_id:fileId})
         .then(() => {
           // 刷新文件列表
           axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
@@ -111,6 +115,13 @@ export default function FileManager({ projectId }) {
    const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
+  //搜索
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+  const filteredFiles = files.filter(file => 
+    file.file_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div>
@@ -124,21 +135,17 @@ export default function FileManager({ projectId }) {
           />
         <Grid item >
           <Typography variant="h6">文件列表</Typography>
-          <Paper elevation={3} style={{ maxHeight:500, width:600, overflow: 'auto' }} >
+          <Paper elevation={3} style={{ maxHeight:500, width:800, overflow: 'auto' }} >
             <List>
               <ListItem>
-                <Checkbox
-                  indeterminate={selectedFiles.length > 0 && selectedFiles.length < files.length}
-                  checked={selectedFiles.length === files.length}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      setSelectedFiles(files);
-                    } else {
-                      setSelectedFiles([]);
-                    }
-                  }}
+                <TextField
+                  label="搜索文件"
+                  variant="outlined"
+                  fullWidth
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  sx={{ width: 350 }}
                 />
-                <ListItemText primary="全选" />
                 {/*文件操作button组 */}
                 <ListItemSecondaryAction>
                   <Grid container spacing={1} alignItems="center">
@@ -181,13 +188,13 @@ export default function FileManager({ projectId }) {
                   </Grid>
                 </ListItemSecondaryAction>
               </ListItem>
-              {files.map((file) => (
+              {filteredFiles.map((file) => (
                 <ListItem key={file.file_id} divider>
                   <Checkbox
                     checked={selectedFiles.includes(file.file_id)}
                     onChange={() => handleCheckboxChange(file.file_id)}
                   />
-                  <ListItemText primary={`${file.file_name} ${file.file_format}`} secondary={file.upload_time}/>
+                  <ListItemText primary={`${file.file_name} ${file.file_format}`} secondary={file.upload_time} />
                 </ListItem>
               ))}
             </List>
@@ -199,14 +206,24 @@ export default function FileManager({ projectId }) {
         <DialogTitle>预览文件</DialogTitle>
         <DialogContent>
           {/* 根据文件类型显示不同的预览组件 */}
-          {selectedFiles.map((fileId) => (
-            <iframe
-            key={fileId}
-            title={"文件预览"}
-            src={`http://47.123.7.53:8000/file/preview/${fileId}`}
-            style={{ width: '100%', height: '500px', marginBottom: 10 }}
-          />
-          ))}
+          {selectedFiles.map((fileId) => {
+            const file = files.find(f => f.file_id === fileId);
+            const previewUrl = file ? `http://47.123.7.53:8000/file/preview/${fileId}` : null;
+
+            if (!file || !previewUrl) {
+              console.error(`无法预览ID为 ${fileId} 的文件`);
+              return null;
+            }
+            return (
+              <iframe
+                key={fileId}
+                title="文件预览"
+                src={previewUrl}
+                style={{ width: '100%', height: '500px', marginBottom: 10 }}
+                charSet="UTF-8"
+              />
+            );
+          })}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClosePreview} startIcon={<Close />}>
