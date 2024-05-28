@@ -53,8 +53,8 @@ function Row(props) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>检查人员</TableCell>
-                    <TableCell>描述</TableCell>
+                    <TableCell>质检员</TableCell>
+                    <TableCell>施工时间</TableCell>
                     <TableCell align="right">报告编号</TableCell>
                   </TableRow>
                 </TableHead>
@@ -115,10 +115,10 @@ export default function ReportList() {
             <TableHead>
             <TableRow>
                 <TableCell />
-                <TableCell>检查项目</TableCell>
-                <TableCell align="right">检查情况</TableCell>
-                <TableCell align="right">日期</TableCell>
-                <TableCell align="right">处理</TableCell>
+                <TableCell>检验工程</TableCell>
+                <TableCell align="right">检验情况</TableCell>
+                <TableCell align="right">检验日期</TableCell>
+                <TableCell align="right">质检员意见</TableCell>
             </TableRow>
             </TableHead>
             <TableBody>

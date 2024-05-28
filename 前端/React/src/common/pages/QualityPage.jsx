@@ -16,6 +16,7 @@ export default function QualityPage() {
   const projectId = searchParams.get("projectId");
   const [templates, setTemplates] = useState([]);
   const [isTemplateDetailOpen, setIsTemplateDetailOpen] = useState(false); // 控制模板详细信息弹窗显示与隐藏
+  
   useEffect(() => {
     fetchTemplates();
   }, []);
@@ -43,9 +44,9 @@ export default function QualityPage() {
     setIsCreateQuaTemOpen(false);
   };
 
-   // 处理模板详细信息显示
-   const [selectedTemplate, setSelectedTemplate] = useState(null);
-   //点击模板显示详细信息
+  // 处理模板详细信息显示
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  //点击模板显示详细信息
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
     setIsTemplateDetailOpen(true); // 点击模板时显示详细信息弹窗
@@ -70,7 +71,7 @@ export default function QualityPage() {
 
   const handleDeleteTemplate = async () => {
     // 发送删除模板的请求
-    await axios.delete(`http://47.123.7.53:8000/quality/template/delete/${selectedTemplate.id}/`);
+    await axios.post("http://47.123.7.53:8000/quality/template/delete/",{qit_id:selectedTemplate.id});
     // 更新模板列表
     await fetchTemplates();
     handleCloseMenu();
@@ -137,16 +138,29 @@ export default function QualityPage() {
       </Grid>
        {/* 模板详细信息弹窗 */}
        <Dialog open={isTemplateDetailOpen} onClose={handleCloseTemplateDetail}>
-        <DialogTitle>模板详细信息</DialogTitle>
+        <DialogTitle>详细信息</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {selectedTemplate && (
-              <div>
-                <Typography variant="body1">名称: {selectedTemplate.name}</Typography>
-                {/* 在这里添加模板的其他详细信息 */}
-              </div>
-            )}
-          </DialogContentText>
+              {selectedTemplate && (
+                <div>
+                  <Typography variant="body1">模板名称: {selectedTemplate.name}</Typography>
+
+                  {selectedTemplate.items && selectedTemplate.items.length > 0 ? (
+                    <ul>
+                      {selectedTemplate.items.map((item) => (
+                        <li key={item.id}>
+                          <Typography variant="body2">
+                            检验项目: {item.NAME_Item}  —— 规定值或允许偏差: {item.VALUE_Item}
+                          </Typography>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <Typography variant="body2">暂无检验项目</Typography>
+                  )}
+                </div>
+              )}
+            </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseTemplateDetail}>关闭</Button>

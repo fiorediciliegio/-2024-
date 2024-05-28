@@ -1,7 +1,8 @@
 import React, { useState} from 'react';
 import Modal from "react-modal";
 import axios from 'axios';
-import { Typography, Grid,  TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Typography, Grid,  TextField, RadioGroup, FormControlLabel, Radio, Button,IconButton  } from '@mui/material';
+import { PhotoCamera, Delete } from '@mui/icons-material';
 import TimePicker from '../components/TimePicker';
 import InputBox from '../components/InputBox';
 import InputBoxML from '../components/InputBoxML.jsx';
@@ -10,35 +11,78 @@ import SaveButton from '../components/SaveButton';
 
 Modal.setAppElement("#root");
 
-export default function CreateQuality  ({ onClose, templates, projectId })  {
+export default function CreateSafety  ({ onClose, templates, projectId })  {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [report, setReport] = useState({
-    qrname: '',
-    qrpart: '',
-    qrperson: '',
-    qrcons_date: '',
-    qrins_date: '',
-    qrnumber: '',
-    qrsubitems: [],
-    qrfeedback:'',
-    qrevaluation:'',
+    srname: '',
+    srpart: '',
+    srperson: '',
+    srcons_date: '',
+    srins_date: '',
+    srnumber: '',
+    srsubitems: [],
+    srfeedback:'',
+    srevaluation:'',
   });
+  const [photos, setPhotos] = useState([]); // 修改为数组状态
 
   //选择模板
   const handleTemplateChange = (e) => {
-    const template = templates.find(t => t.id === e.target.value);
-    setSelectedTemplate(template);
-    setReport({ ...report, qrsubitems: template.subitems });
+    const templateId = parseInt(e.target.value);
+    const template = templates.find(t => t.id === templateId);
+
+    if (template) {
+      setSelectedTemplate(template);
+      setReport({ ...report, srname: template.name, srsubitems: template.items.map(item => ({ ...item, result: '' })) });
+    } else {
+      console.error(`Template with ID ${templateId} not found`);
+      setSelectedTemplate(null);
+      setReport({ ...report, qrsubitems: [] });
+    }
   };
+
   //输入值
   const handleChange = (value, fieldName) => {
-    setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+    if (fieldName === 'srsubitems') {
+      const updatedSubItems = [...report.srsubitems];
+      updatedSubItems[value.index][value.field] = value.target.value;
+      setReport({ 
+        ...report, 
+        srsubitems: updatedSubItems });
+    } else {
+      setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+    }
+  };
+
+  // 处理照片上传
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newPhotos = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    setPhotos([...photos, ...newPhotos]);
+  };
+
+  // 删除照片
+  const handleDeletePhoto = (index) => {
+    const newPhotos = photos.filter((_, i) => i !== index);
+    setPhotos(newPhotos);
   };
 
   //保存到后端
   const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append('report', JSON.stringify(report));
+    photos.forEach((photo, index) => {
+      formData.append(`photo_${index}`, photo);
+    });
     try {
-      await axios.post(`http://47.123.7.53:8000/quality/report/add/${projectId}`, report);
+      await axios.post(`http://47.123.7.53:8000/safety/report/add/${projectId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       onClose();
     } catch (error) {
       console.error('Error saving report:', error);
@@ -53,7 +97,7 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
     >
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* 顶部栏，显示页面标题，并提供关闭按钮 */}
-        <TopBar title="新建质量检验报告" close={onClose}/>
+        <TopBar title="新建安全报告" close={onClose}/>
         <Grid container direction="column" spacing={2} marginTop={2}>
           {/*模板选择框 */}
           <Grid item container>
@@ -79,70 +123,130 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
           {/*基本信息*/}
           <Grid item container spacing={1}>
             <Grid item xs={6}>
-              <InputBox label="工程名称" value={report.qrname} onChange={(e) => handleChange(e, 'qrname')} />
+              <InputBox label="工程名称" value={report.srname} onChange={(e) => handleChange(e, 'srname')} />
             </Grid>
             <Grid item xs={6}>
-              <InputBox label="检验部位及编号" value={report.qrpart} onChange={(e) => handleChange(e, 'qrpart')} />
+              <InputBox label="检查部位及编号" value={report.srpart} onChange={(e) => handleChange(e, 'srpart')} />
             </Grid>
             <Grid item xs={6}>
-              <InputBox label="质检人" value={report.qrperson} onChange={(e) => handleChange(e, 'qrperson')} />
+              <InputBox label="安全员" value={report.srperson} onChange={(e) => handleChange(e, 'srperson')} />
             </Grid>
             <Grid item xs={6}>
-              <TimePicker label="施工时间" value={report.qrcons_date} onChange={(e) => handleChange(e, 'qrcons_date')} />
+              <TimePicker label="检查时间" value={report.srins_date} onChange={(e) => handleChange(e, 'srins_date')} />
             </Grid>
             <Grid item xs={6}>
-              <TimePicker label="检验时间" value={report.qrins_date} onChange={(e) => handleChange(e, 'qrins_date')} />
+              <InputBox label="报告编号" value={report.srnumber} onChange={(e) => handleChange(e, 'srnumber')} />
             </Grid>
             <Grid item xs={6}>
-              <InputBox label="报告编号" value={report.qrnumber} onChange={(e) => handleChange(e, 'qrnumber')} />
-            </Grid>
-          </Grid> 
-          {/*检验子项目*/}
-          <Grid item container>
-              <Typography variant="h6">检验项目</Typography>
-              {report.qrsubitems.map((subItem, index) => (
-                <Grid container spacing={2} key={index}>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="检验项目"
-                      fullWidth
-                      value={subItem.name}
-                      onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'name' } })}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="规定值或允许偏差"
-                      fullWidth
-                      value={subItem.requirement}
-                      onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'requirement' } })}
-                    />
-                  </Grid>
+              {/*上传安全检查照片*/}
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ margin: 1 }}
+                startIcon={<PhotoCamera />}
+              >
+                上传现场照片
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  multiple
+                  onChange={handlePhotoChange}
+                />
+              </Button>
+              {photos.length > 0 && (
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                  {photos.map((photo, index) => (
+                    <Grid item key={index} xs={6} sm={4} md={3}>
+                      <div style={{ position: 'relative' }}>
+                        <img
+                          src={photo.preview}
+                          alt={photo.file.name}
+                          style={{ width: '100%', height: 'auto' }}
+                        />
+                        <Typography variant="body2" noWrap>{photo.file.name}</Typography>
+                        <IconButton
+                          onClick={() => handleDeletePhoto(index)}
+                          style={{
+                            position: 'absolute',
+                            top: 5,
+                            right: 5,
+                            backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </div>
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
+              )}
+            </Grid>
+          </Grid>
+          {/*检验子项目*/}
+          <Grid item container >
+            <Grid item container direction="row">
+              <Grid item xs={1}></Grid>
+              <Grid item xs={4}><Typography sx={{ textAlign: "center" }}>检验项目*</Typography></Grid>
+              <Grid item xs={4}><Typography sx={{ textAlign: "center" }}>检验标准*</Typography></Grid>
+              <Grid item xs={3}><Typography sx={{ textAlign: "center" }}>检验结果</Typography></Grid>
+            </Grid>
+            {report.srsubitems.map((subItem, index) => (
+              <Grid item container spacing={2} key={index} alignItems="center" marginBottom={1}>
+                <Grid item xs={1} alignContent="center" >
+                  <Typography sx={{ textAlign: "center" }}>{index+1}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    value={subItem.name}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    value={subItem.value}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    fullWidth
+                    value={subItem.result}
+                    onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'result' } }, 'qrsubitems')}
+                  />
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
           {/*其他信息*/}
-          <Grid item container>
-            <Grid item xs={6}>
-              <InputBoxML label="质检员意见" value={report.qrfeedback} onChange={(e) => handleChange(e, 'qrfeedback')} /></Grid>
-            <Grid item container xs={6} spacing={2}>
-              <Typography variant="h6">总体情况</Typography>
-              <RadioGroup
-                row
-                aria-label="overallQuality"
-                name="overallQuality"
-                value={report.qrevaluation}
-                onChange={(e) => handleChange(e, 'qrevaluation')} 
-              >
-                <FormControlLabel value="qualified" control={<Radio />} label="合格" />
-                <FormControlLabel value="minorIssue" control={<Radio />} label="一般质量问题" />
-                <FormControlLabel value="majorIssue" control={<Radio />} label="重大质量问题" />
-              </RadioGroup>
+          <Grid item container justifyContent="flex-start" alignContent="flex-start">
+            <Grid item container xs={6}>
+              <InputBoxML label="安全员意见" value={report.srfeedback} onChange={(e) => handleChange(e, 'srfeedback')} />
+            </Grid>
+            <Grid item container xs={6} direction={"column"}>
+              <Grid item><Typography >总体情况</Typography></Grid>
+              <Grid item container >
+                <RadioGroup
+                  row
+                  aria-label="overallSafety"
+                  name="overallSafety"
+                  value={report.srevaluation}
+                  onChange={(e) => handleChange(e, 'srevaluation')} 
+                >
+                  <FormControlLabel value="qualified" control={<Radio />} label="合格" />
+                  <FormControlLabel value="minorIssue" control={<Radio />} label="一般安全问题" />
+                  <FormControlLabel value="majorIssue" control={<Radio />} label="重大安全问题" />
+                </RadioGroup>
+              </Grid>
+              <Grid item container justifyContent="flex-end"> <SaveButton onClick={handleSubmit}>提交报告</SaveButton></Grid>
             </Grid>
           </Grid> 
-          <Grid item xs={12} container justifyContent="center">
-            <SaveButton onClick={handleSubmit}>保存</SaveButton>
-          </Grid>
         </Grid>
       </div>
     </Modal>

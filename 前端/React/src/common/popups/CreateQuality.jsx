@@ -24,16 +24,34 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
     qrevaluation:'',
   });
 
-  //选择模板
-  const handleTemplateChange = (e) => {
-    const template = templates.find(t => t.id === e.target.value);
-    setSelectedTemplate(template);
-    setReport({ ...report, qrsubitems: template.subitems });
+   //选择模板
+   const handleTemplateChange = (e) => {
+    const templateId = parseInt(e.target.value);
+    const template = templates.find(t => t.id === templateId);
+
+    if (template) {
+      setSelectedTemplate(template);
+      setReport({ 
+        ...report, 
+        qrname:template.name,
+        qrsubitems: template.items.map(item => ({ ...item, result: '' })) });
+    } else {
+      console.error(`Template with ID ${templateId} not found`);
+      setSelectedTemplate(null);
+      setReport({ ...report, qrsubitems: [] });
+    }
   };
   //输入值
   const handleChange = (value, fieldName) => {
-    setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+    if (fieldName === 'qrsubitems') {
+      const updatedSubItems = [...report.qrsubitems];
+      updatedSubItems[value.index][value.field] = value.target.value;
+      setReport({ ...report, qrsubitems: updatedSubItems });
+    } else {
+      setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+    }
   };
+
 
   //保存到后端
   const handleSubmit = async () => {
@@ -85,7 +103,7 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
               <InputBox label="检验部位及编号" value={report.qrpart} onChange={(e) => handleChange(e, 'qrpart')} />
             </Grid>
             <Grid item xs={6}>
-              <InputBox label="质检人" value={report.qrperson} onChange={(e) => handleChange(e, 'qrperson')} />
+              <InputBox label="质检员" value={report.qrperson} onChange={(e) => handleChange(e, 'qrperson')} />
             </Grid>
             <Grid item xs={6}>
               <TimePicker label="施工时间" value={report.qrcons_date} onChange={(e) => handleChange(e, 'qrcons_date')} />
@@ -98,51 +116,69 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
             </Grid>
           </Grid> 
           {/*检验子项目*/}
-          <Grid item container>
-              <Typography variant="h6">检验项目</Typography>
-              {report.qrsubitems.map((subItem, index) => (
-                <Grid container spacing={2} key={index}>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="检验项目"
-                      fullWidth
-                      value={subItem.name}
-                      onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'name' } })}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label="规定值或允许偏差"
-                      fullWidth
-                      value={subItem.requirement}
-                      onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'requirement' } })}
-                    />
-                  </Grid>
+          <Grid item container >
+            <Grid item container direction="row">
+              <Grid item xs={1}></Grid>
+              <Grid item xs={4}><Typography sx={{ textAlign: "center" }}>检验项目*</Typography></Grid>
+              <Grid item xs={4}><Typography sx={{ textAlign: "center" }}>规定值或允许偏差*</Typography></Grid>
+              <Grid item xs={3}><Typography sx={{ textAlign: "center" }}>检验结果</Typography></Grid>
+            </Grid>
+            {report.qrsubitems.map((subItem, index) => (
+              <Grid item container spacing={2} key={index} alignItems="center" marginBottom={1}>
+                <Grid item xs={1} alignContent="center" >
+                  <Typography sx={{ textAlign: "center" }}>{index+1}</Typography>
                 </Grid>
-              ))}
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    value={subItem.NAME_Item}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    value={subItem.VALUE_Item}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    fullWidth
+                    value={subItem.result}
+                    onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'result' } }, 'qrsubitems')}
+                  />
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
           {/*其他信息*/}
-          <Grid item container>
-            <Grid item xs={6}>
-              <InputBoxML label="质检员意见" value={report.qrfeedback} onChange={(e) => handleChange(e, 'qrfeedback')} /></Grid>
-            <Grid item container xs={6} spacing={2}>
-              <Typography variant="h6">总体情况</Typography>
-              <RadioGroup
-                row
-                aria-label="overallQuality"
-                name="overallQuality"
-                value={report.qrevaluation}
-                onChange={(e) => handleChange(e, 'qrevaluation')} 
-              >
-                <FormControlLabel value="qualified" control={<Radio />} label="合格" />
-                <FormControlLabel value="minorIssue" control={<Radio />} label="一般质量问题" />
-                <FormControlLabel value="majorIssue" control={<Radio />} label="重大质量问题" />
-              </RadioGroup>
+          <Grid item container justifyContent="flex-start" alignContent="flex-start">
+            <Grid item container xs={6}>
+              <InputBoxML label="质检员意见" value={report.qrfeedback} onChange={(e) => handleChange(e, 'qrfeedback')} />
+            </Grid>
+            <Grid item container xs={6} direction={"column"}>
+              <Grid item><Typography >总体情况</Typography></Grid>
+              <Grid item container >
+                <RadioGroup
+                  row
+                  aria-label="overallQuality"
+                  name="overallQuality"
+                  value={report.qrevaluation}
+                  onChange={(e) => handleChange(e, 'qrevaluation')} 
+                >
+                  <FormControlLabel value="qualified" control={<Radio />} label="合格" />
+                  <FormControlLabel value="minorIssue" control={<Radio />} label="一般质量问题" />
+                  <FormControlLabel value="majorIssue" control={<Radio />} label="重大质量问题" />
+                </RadioGroup>
+              </Grid>
+              <Grid item container justifyContent="flex-end"> <SaveButton onClick={handleSubmit}>提交报告</SaveButton></Grid>
             </Grid>
           </Grid> 
-          <Grid item xs={12} container justifyContent="center">
-            <SaveButton onClick={handleSubmit}>保存</SaveButton>
-          </Grid>
         </Grid>
       </div>
     </Modal>
