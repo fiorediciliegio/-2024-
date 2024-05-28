@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, 
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions, 
-  Paper, Grid, Typography, Checkbox,  Snackbar, TextField} from '@mui/material';
+  Paper, Grid, Typography, Checkbox,  Snackbar, TextField, CircularProgress} from '@mui/material';
 import { CloudUpload, CloudDownload, Visibility, Close, Delete } from '@mui/icons-material';
 import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
@@ -13,6 +13,8 @@ export default function FileManager({ projectId }) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  // 在 FileManager 组件中添加一个新的状态用于跟踪上传进度
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // 获取已上传的文件列表
   useEffect(() => {
@@ -25,14 +27,21 @@ export default function FileManager({ projectId }) {
       });
   }, [projectId]);
 
-  // 上传文件(成功)
+  // 上传文件
   const handleUpload = (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
 
-    axios.post(`http://47.123.7.53:8000/file/upload/${projectId}/`, formData)
+    axios.post(`http://47.123.7.53:8000/file/upload/${projectId}/`, formData,{
+      onUploadProgress: (progressEvent) => {
+        const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        setUploadProgress(progress);
+      }
+    })
       .then(() => {
+        // 上传完成后重置上传进度
+        setUploadProgress(0);
         // 刷新文件列表
         axios.get(`http://47.123.7.53:8000/file/project/list/${projectId}/`)
           .then(response => {
@@ -135,7 +144,7 @@ export default function FileManager({ projectId }) {
           />
         <Grid item >
           <Typography variant="h6">文件列表</Typography>
-          <Paper elevation={3} style={{ maxHeight:500, width:800, overflow: 'auto' }} >
+          <Paper elevation={3} style={{ maxHeight:600, width:800, overflow: 'auto' }} >
             <List>
               <ListItem>
                 <TextField
@@ -144,8 +153,9 @@ export default function FileManager({ projectId }) {
                   fullWidth
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  sx={{ width: 350 }}
+                  sx={{ width: 350, margin:1 }}
                 />
+                {uploadProgress > 0 && <CircularProgress variant="determinate" value={uploadProgress} />}
                 {/*文件操作button组 */}
                 <ListItemSecondaryAction>
                   <Grid container spacing={1} alignItems="center">

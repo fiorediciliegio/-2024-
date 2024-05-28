@@ -32,7 +32,7 @@ export default function CreateQuaTem({onClose, projectId}){
     const handleSave = async() => {
         try{
             await axios.post(
-                `http://47.123.7.53:8000/quality/template/add/${projectId}`,
+                `http://47.123.7.53:8000/quality/template/add/${projectId}/`,
                 quaTemplate,
             );
             onClose();
