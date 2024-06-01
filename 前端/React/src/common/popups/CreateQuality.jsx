@@ -19,7 +19,7 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
     qrcons_date: '',
     qrins_date: '',
     qrnumber: '',
-    qrsubitems: [],
+    qrsubitems: [ { name: '', requirement: '', result: '' }],
     qrfeedback:'',
     qrevaluation:'',
   });
@@ -34,7 +34,8 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
       setReport({ 
         ...report, 
         qrname:template.name,
-        qrsubitems: template.items.map(item => ({ ...item, result: '' })) });
+        qrsubitems: template.items.map(item => ({ name: item.NAME_Item, requirement: item.VALUE_Item, result: '' }))
+      });
     } else {
       console.error(`Template with ID ${templateId} not found`);
       setSelectedTemplate(null);
@@ -42,21 +43,28 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
     }
   };
   //输入值
-  const handleChange = (value, fieldName) => {
+  const handleChange = (value, fieldName, index) => {
     if (fieldName === 'qrsubitems') {
-      const updatedSubItems = [...report.qrsubitems];
-      updatedSubItems[value.index][value.field] = value.target.value;
-      setReport({ ...report, qrsubitems: updatedSubItems });
+      setReport(prevReport => ({
+        ...prevReport,
+        qrsubitems: prevReport.qrsubitems.map((item, idx) => {
+          if (idx === index) {
+            return { ...item, [value.field]: value.target.value };
+          }
+          return item;
+        })
+      }));
     } else {
-      setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+      setReport(prevReport => ({ ...prevReport, [fieldName]: value.target ? value.target.value : value }));
     }
   };
-
-
+  
   //保存到后端
   const handleSubmit = async () => {
     try {
-      await axios.post(`http://47.123.7.53:8000/quality/report/add/${projectId}`, report);
+      // 打印发送的内容
+      console.log("Sending report:", report);
+      await axios.post(`http://47.123.7.53:8000/quality/report/add/${projectId}/`, report);
       onClose();
     } catch (error) {
       console.error('Error saving report:', error);
@@ -131,7 +139,7 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
                 <Grid item xs={4}>
                   <TextField
                     fullWidth
-                    value={subItem.NAME_Item}
+                    value={subItem.name}
                     InputProps={{
                       readOnly: true,
                     }}
@@ -140,7 +148,7 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
                 <Grid item xs={4}>
                   <TextField
                     fullWidth
-                    value={subItem.VALUE_Item}
+                    value={subItem.requirement}
                     InputProps={{
                       readOnly: true,
                     }}
@@ -149,8 +157,8 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
                 <Grid item xs={3}>
                   <TextField
                     fullWidth
-                    value={subItem.result}
-                    onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'result' } }, 'qrsubitems')}
+                    value={subItem.result} 
+                    onChange={(e) => handleChange({ target: { value: e.target.value }, field: 'result' }, 'qrsubitems', index)}
                   />
                 </Grid>
               </Grid>
@@ -171,9 +179,9 @@ export default function CreateQuality  ({ onClose, templates, projectId })  {
                   value={report.qrevaluation}
                   onChange={(e) => handleChange(e, 'qrevaluation')} 
                 >
-                  <FormControlLabel value="qualified" control={<Radio />} label="合格" />
-                  <FormControlLabel value="minorIssue" control={<Radio />} label="一般质量问题" />
-                  <FormControlLabel value="majorIssue" control={<Radio />} label="重大质量问题" />
+                  <FormControlLabel value="合格" control={<Radio />} label="合格" />
+                  <FormControlLabel value="一般质量问题" control={<Radio />} label="一般质量问题" />
+                  <FormControlLabel value="重大质量问题" control={<Radio />} label="重大质量问题" />
                 </RadioGroup>
               </Grid>
               <Grid item container justifyContent="flex-end"> <SaveButton onClick={handleSubmit}>提交报告</SaveButton></Grid>

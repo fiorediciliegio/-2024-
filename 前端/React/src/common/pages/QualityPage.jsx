@@ -101,7 +101,7 @@ export default function QualityPage() {
             <StackBar/></Grid>
           {/*质量清单 */}
           <Grid item container xs={7} spacing={2} justifyContent="flex-start" alignItems="flex-start">
-            <ReportList/></Grid>
+            <ReportList projectId={projectId}/></Grid>
             {/*创建模板及报告 */}
           <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="flex-start">
             <Paper style={{ width: "95%", height: "100%", padding: "15px" }}>

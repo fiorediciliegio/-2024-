@@ -1,22 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {Box,Collapse,IconButton,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Typography,Paper} from '@mui/material';
+import axios from 'axios';
+import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-function createData(issue, result, checkdate, solution) {
+function createData(qrname, qrpart, qrevaluation, qrins_date, more) {
   return {
-    issue,
-    result,
-    checkdate,
-    solution,
-    more: [
-      {
-        person: 'lola',
-        description: 'des1',
-        issueID: 1,
-      }
-    ],
+    qrname: qrname,
+    qrpart: qrpart,
+    qrevaluation: qrevaluation,
+    qrins_date: qrins_date,
+    more,
   };
 }
 
@@ -37,11 +32,12 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.issue}
+          {row.qrname}
         </TableCell>
-        <TableCell align="right">{row.result}</TableCell>
-        <TableCell align="right">{row.checkdate}</TableCell>
-        <TableCell align="right">{row.solution}</TableCell>
+        <TableCell align="right">{row.qrpart}</TableCell>
+        <TableCell align="right">{row.qrevaluation}</TableCell>
+        <TableCell align="right">{row.qrins_date}</TableCell>
+        <TableCell align="right">{row.qrfeedback}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -54,18 +50,20 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>质检员</TableCell>
+                    <TableCell>质检员意见</TableCell>
                     <TableCell>施工时间</TableCell>
                     <TableCell align="right">报告编号</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.more.map((moreRow) => (
-                    <TableRow key={moreRow.issueID}>
+                  {row.more.map((moreRow,index) => (
+                    <TableRow key={index}>
                       <TableCell component="th" scope="row">
-                        {moreRow.person}
+                        {moreRow.qrperson}
                       </TableCell>
-                      <TableCell>{moreRow.description}</TableCell>
-                      <TableCell align="right">{moreRow.issueID}</TableCell>
+                      <TableCell>{moreRow.qrfeedback}</TableCell>
+                      <TableCell>{moreRow.qrcons_date}</TableCell>
+                      <TableCell align="right">{moreRow.qrnumber}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -80,54 +78,75 @@ function Row(props) {
 
 Row.propTypes = {
   row: PropTypes.shape({
-    result: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
-    solution: PropTypes.string.isRequired,
-    history: PropTypes.arrayOf(
+    qrname: PropTypes.string.isRequired,
+    qrpart: PropTypes.string.isRequired,
+    qrevaluation: PropTypes.string.isRequired,
+    qrins_date: PropTypes.string.isRequired,
+    more: PropTypes.arrayOf(
       PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
+        qrperson: PropTypes.string.isRequired,
+        qrfeedback: PropTypes.string,
+        qrcons_date: PropTypes.string.isRequired,
+        qrnumber: PropTypes.number.isRequired,
+      })
     ).isRequired,
-    name: PropTypes.string.isRequired,
   }).isRequired,
 };
 
-const rows = [
-  createData('项目1', '合格', "2024-02-08", "无"),
-  createData('项目2','一般质量问题', "2024-05-13", "待处理"),
-  createData('项目3','合格', "2024-03-06", "无"),
-];
+export default function ReportList({projectId}) {
+  const [rows, setRows] = useState([]);
 
-export default function ReportList() {
+  useEffect(() => {
+    axios.get(`http://47.123.7.53:8000/quality/report/list/${projectId}/`) 
+      .then(response => {
+        const fetchedData = response.data.map(item => 
+          createData(
+            item.qrname,
+            item.qrpart,
+            item.qrevaluation,
+            item.qrins_date,
+            [{
+              qrperson: item.qrperson,
+              qrfeedback: item.qrfeedback,
+              qrcons_date: item.qrcons_date,
+              qrnumber: item.qrnumber,
+            }]
+          )
+        );
+        setRows(fetchedData);
+      })
+      .catch(error => {
+        console.error("Error fetching data: ", error);
+      });
+  }, [projectId]);
+
   return (
-    <Box  style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "95%",
-        height: "100%",
-      }}>
-        <TableContainer component={Paper} style={{ marginTop: '16px' }}>
+    <Box style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      width: "95%",
+      height: "100%",
+    }}>
+      <TableContainer component={Paper} style={{ marginTop: '16px' }}>
         <Table aria-label="collapsible table">
-            <TableHead>
+          <TableHead>
             <TableRow>
-                <TableCell />
-                <TableCell>检验工程</TableCell>
-                <TableCell align="right">检验情况</TableCell>
-                <TableCell align="right">检验日期</TableCell>
-                <TableCell align="right">质检员意见</TableCell>
+              <TableCell />
+              <TableCell>检验工程</TableCell>
+              <TableCell align="right">部位及编号</TableCell>
+              <TableCell align="right">检验情况</TableCell>
+              <TableCell align="right">检验日期</TableCell>
             </TableRow>
-            </TableHead>
-            <TableBody>
+          </TableHead>
+          <TableBody>
             {rows.map((row) => (
-                <Row key={row.name} row={row} />
+              <Row key={row.qrname} row={row} />
             ))}
-            </TableBody>
+          </TableBody>
         </Table>
-        </TableContainer>
+      </TableContainer>
     </Box>
   );
 }

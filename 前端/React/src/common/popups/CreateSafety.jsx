@@ -17,10 +17,9 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
     srname: '',
     srpart: '',
     srperson: '',
-    srcons_date: '',
     srins_date: '',
     srnumber: '',
-    srsubitems: [],
+    srsubitems: [{name:'', requirement:'', result:''}],
     srfeedback:'',
     srevaluation:'',
   });
@@ -33,24 +32,32 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
 
     if (template) {
       setSelectedTemplate(template);
-      setReport({ ...report, srname: template.name, srsubitems: template.items.map(item => ({ ...item, result: '' })) });
+      setReport({ 
+        ...report, 
+        srname: template.name, 
+        srsubitems: template.items.map(item => ({ name: item.name, requirement: item.value, result: '' }))
+      });
     } else {
       console.error(`Template with ID ${templateId} not found`);
       setSelectedTemplate(null);
-      setReport({ ...report, qrsubitems: [] });
+      setReport({ ...report, srsubitems: [] });
     }
   };
 
   //输入值
-  const handleChange = (value, fieldName) => {
+  const handleChange = (value, fieldName,index) => {
     if (fieldName === 'srsubitems') {
-      const updatedSubItems = [...report.srsubitems];
-      updatedSubItems[value.index][value.field] = value.target.value;
-      setReport({ 
-        ...report, 
-        srsubitems: updatedSubItems });
+      setReport(prevReport => ({
+        ...prevReport,
+        srsubitems: prevReport.srsubitems.map((item, idx) => {
+          if (idx === index) {
+            return { ...item, [value.field]: value.target.value };
+          }
+          return item;
+        })
+      }));
     } else {
-      setReport({ ...report, [fieldName]: value.target ? value.target.value : value });
+      setReport(prevReport => ({ ...prevReport, [fieldName]: value.target ? value.target.value : value }));
     }
   };
 
@@ -75,10 +82,12 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
     const formData = new FormData();
     formData.append('report', JSON.stringify(report));
     photos.forEach((photo, index) => {
-      formData.append(`photo_${index}`, photo);
+      formData.append(`images`, photo.file);
     });
     try {
-      await axios.post(`http://47.123.7.53:8000/safety/report/add/${projectId}`, formData, {
+      // 打印发送的内容
+      console.log("Sending report:", report);
+      await axios.post(`http://47.123.7.53:8000/safety/report/add/${projectId}/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -208,7 +217,7 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
                 <Grid item xs={4}>
                   <TextField
                     fullWidth
-                    value={subItem.value}
+                    value={subItem.requirement}
                     InputProps={{
                       readOnly: true,
                     }}
@@ -218,7 +227,7 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
                   <TextField
                     fullWidth
                     value={subItem.result}
-                    onChange={(e) => handleChange({ target: { value: e.target.value, index, field: 'result' } }, 'qrsubitems')}
+                    onChange={(e) => handleChange({ target: { value: e.target.value }, field: 'result' }, 'srsubitems', index)}
                   />
                 </Grid>
               </Grid>
@@ -239,9 +248,9 @@ export default function CreateSafety  ({ onClose, templates, projectId })  {
                   value={report.srevaluation}
                   onChange={(e) => handleChange(e, 'srevaluation')} 
                 >
-                  <FormControlLabel value="qualified" control={<Radio />} label="合格" />
-                  <FormControlLabel value="minorIssue" control={<Radio />} label="一般安全问题" />
-                  <FormControlLabel value="majorIssue" control={<Radio />} label="重大安全问题" />
+                  <FormControlLabel value="合格" control={<Radio />} label="合格" />
+                  <FormControlLabel value="一般安全问题" control={<Radio />} label="一般安全问题" />
+                  <FormControlLabel value="重大安全问题" control={<Radio />} label="重大安全问题" />
                 </RadioGroup>
               </Grid>
               <Grid item container justifyContent="flex-end"> <SaveButton onClick={handleSubmit}>提交报告</SaveButton></Grid>
