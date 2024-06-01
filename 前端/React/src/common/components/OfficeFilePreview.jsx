@@ -1,12 +1,23 @@
+/* global Office */
 import React, { useEffect } from 'react';
-import { loadOfficeDocument } from '../constants/officeHelpers.js';
 
 const OfficeFilePreview = ({ fileUrl }) => {
   useEffect(() => {
-    loadOfficeDocument(fileUrl);
+    // 加载 Office.js
+    Office.onReady(() => {
+      Office.context.document.setFilePropertiesAsync({ url: fileUrl });
+    });
   }, [fileUrl]);
 
-  return <div id="office-container" style={{ width: '100%', height: '500px' }}></div>;
+  return (
+    <div style={{ width: '100%', height: '500px' }}>
+      <iframe
+        src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`}
+        style={{ width: '100%', height: '100%', border: 'none' }}
+        title="Office File Preview"
+      ></iframe>
+    </div>
+  );
 };
 
 export default OfficeFilePreview;

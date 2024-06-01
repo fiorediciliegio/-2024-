@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -6,27 +7,58 @@ import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 
-export default function TitlebarImageList() {
+export default function TitlebarImageList({ projectId }) {
+  const [itemData, setItemData] = useState([]);
+
+
+  useEffect(() => {
+    const fetchImageMetadata = async () => {
+      try {
+        const response = await axios.get(`http://47.123.7.53:8000/safety/report/image/${projectId}/metadata/`);
+        const metadata = response.data.images;
+        setItemData(metadata);
+        // 请求每个图像文件
+        for (const item of metadata) {
+          const imgResponse = await axios.get(`http://47.123.7.53:8000${item.img_url}`, {
+            responseType: 'blob'
+          });
+          const imgUrl = URL.createObjectURL(imgResponse.data);
+          setItemData(prevState => prevState.map(data => data.img_url === item.img_url ? { ...data, img: imgUrl } : data));
+        }
+      } catch (error) {
+        console.error('Error fetching the images:', error);
+      }
+    };
+    fetchImageMetadata();
+  }, [projectId]);
+
+
   return (
-    <ImageList sx={{ width: 500, height: 400 }}>
+    <ImageList sx={{ width: 500, height: 450 }}>
       <ImageListItem key="Subheader" cols={2}>
         <ListSubheader component="div">December</ListSubheader>
       </ImageListItem>
-      {itemData.map((item) => (
-        <ImageListItem key={item.img}>
-          <img
-            srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-            src={`${item.img}?w=248&fit=crop&auto=format`}
-            alt={item.title}
+      {itemData.map((item, index) => (
+        <ImageListItem key={index}>
+          {item.img ? (
+            <img
+            src={item.img}
+            alt={item.title || 'Image'}
             loading="lazy"
-          />
+            onError={(e) => { e.target.onerror = null; e.target.src = "fallback_image_url"; }} 
+            />
+          ) : (
+            <div style={{ width: 248, height: 248, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>
+              <span>Image Not Available</span>
+            </div>
+          )}
           <ImageListItemBar
-            title={item.title}
-            subtitle={item.author}
+            title={item.title || 'No Title'}
+            subtitle={item.author || 'Unknown Author'}
             actionIcon={
               <IconButton
                 sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                aria-label={`info about ${item.title}`}
+                aria-label={`info about ${item.title || 'No Title'}`}
               >
                 <InfoIcon />
               </IconButton>
@@ -37,77 +69,3 @@ export default function TitlebarImageList() {
     </ImageList>
   );
 }
-
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-    author: '@bkristastucchio',
-    rows: 2,
-    cols: 2,
-    featured: true,
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-    author: '@rollelflex_graphy726',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-    author: '@helloimnik',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-    author: '@nolanissac',
-    cols: 2,
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-    author: '@hjrc33',
-    cols: 2,
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-    author: '@arwinneil',
-    rows: 2,
-    cols: 2,
-    featured: true,
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-    author: '@tjdragotta',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-    title: 'Fern',
-    author: '@katie_wasserman',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-    title: 'Mushrooms',
-    author: '@silverdalex',
-    rows: 2,
-    cols: 2,
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
-    title: 'Tomato basil',
-    author: '@shelleypauls',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
-    title: 'Sea star',
-    author: '@peterlaster',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
-    title: 'Bike',
-    author: '@southside_customs',
-    cols: 2,
-  },
-];

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Box } from "@mui/material";
+import React from 'react';
+import { Box, CircularProgress, Alert } from "@mui/material";
 import { BarChart } from '@mui/x-charts/BarChart';
+import useFetchData from '../hooks/useFetchData.js';
 
 const chartSetting = {
   xAxis: [
@@ -15,28 +15,25 @@ const chartSetting = {
 };
 
 export default function BasicBarH({ pjID }) {
-  const [chartData, setChartData] = useState([]);
+  const { data, error } = useFetchData(`http://47.123.7.53:8000/person/project/collect/${pjID}/`);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`http://47.123.7.53:8000/person/project/collect/${pjID}/`);
-        const data = response.data;
+  // 转换数据格式为数组
+  const chartData = Object.entries(data).map(([name, value]) => ({
+    role: name,
+    人员数量: value,
+  }));
 
-        // 转换数据格式为数组
-        const chartDataArray = Object.entries(data).map(([name, value]) => ({
-          role: name,
-          人员数量: value,
-        }));
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
 
-        setChartData(chartDataArray);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [pjID]);
+  if (chartData.length === 0) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height={400}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box

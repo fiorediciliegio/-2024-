@@ -4,7 +4,6 @@ import { useSearchParams} from "react-router-dom";
 import { Grid,Paper,Typography,Box,Menu, MenuItem, ListItemText,Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
-import StackBar from "../components/BarChartSt.jsx";
 import OpenButton from "../components/OpenButton.jsx";
 import CreateSafety from "../popups/CreateSafety.jsx";
 import CreateSafTem from "../popups/CreateSafTem.jsx";
@@ -97,13 +96,13 @@ export default function SafetyPage() {
       >
         <SideBar projectName={projectName} projectId={projectId}/></Grid>
       <Grid item container xs={10} spacing={2}>
-        {/*柱状图 */}
-        <Grid item container xs={6} spacing={2} justifyContent="flex-start" alignItems="flex-start">
-          <SafetyIssueList/></Grid>
+        {/*问题列表 */}
+        <Grid item xs={5} justifyContent="flex-start" alignItems="flex-start">
+          <SafetyIssueList projectId={projectId} projectName={projectName}/></Grid>
         {/*安全照片集合 */}
-        <Grid item container xs={6} spacing={2} justifyContent="flex-start" alignItems="flex-start">
+        <Grid item xs={7} justifyContent="flex-start" alignItems="flex-start">
           <Typography>安全现场照片</Typography>
-          <TitlebarImageList/></Grid>
+          <TitlebarImageList projectId={projectId}/></Grid>
           {/*创建模板及报告 */}
         <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="flex-start">
           <Paper style={{ width: "95%", height: "100%", padding: "15px" }}>

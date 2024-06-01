@@ -23,11 +23,6 @@ export default function TimeLineWithAdd ({pjID}) {
   const [selectedNodeId, setSelectedNodeId] = useState(null); // 存储选择的节点ID
   const [selectedNodeStatus, setSelectedNodeStatus] = useState(""); // 存储选择的节点ID
   
-  //获取节点列表
-  useEffect(() => { 
-    fetchEvents(); 
-  }, [pjID]);
-
   const fetchEvents = () => {
     if (!pjID) return;
     axios
@@ -52,7 +47,11 @@ export default function TimeLineWithAdd ({pjID}) {
         console.error("Error fetching events:", error);
       });
   };
-
+  //获取节点列表
+  useEffect(() => { 
+    fetchEvents(); 
+  }, [pjID]);
+  
   //打开创建节点弹窗
   const handleOpenDialog = () => {
     setOpen(true);

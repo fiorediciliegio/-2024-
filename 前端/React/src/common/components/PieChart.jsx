@@ -1,22 +1,22 @@
-import React, { useState, useEffect }  from 'react';
-import axios from 'axios';
+import React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Alert } from "@mui/material";
+import useFetchData from '../hooks/useFetchData.js';
 
-export default function BasicPie({pjID}) {
-  const [statusData, setStatusData] = useState(null);
+export default function BasicPie({ pjID }) {
+  const { data, error } = useFetchData(`http://47.123.7.53:8000/projectnode/collect/${pjID}/`);
 
-  const getPiechartData = async () => {
-    try{
-      const response = await axios.get(`http://47.123.7.53:8000/projectnode/collect/${pjID}/`);
-        setStatusData(response.data);
-      }catch(error) {
-      console.error("Error getting Piechart Status Data:", error);
-      }
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
   }
-  useEffect(()=>{
-    getPiechartData()
-  },[pjID])
+
+  if (!data) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height={275}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -29,29 +29,25 @@ export default function BasicPie({pjID}) {
         height: "100%",
       }}
     >
-      {statusData ? (
-            <PieChart
-                series={[
-                    {
-                        data: [
-                            { id: 0, value: statusData.completed_count, label: '已完成' },
-                            { id: 1, value: statusData.in_progress_count, label: '进行中' },
-                            { id: 2, value: statusData.pending_count, label: '未处理' },
-                        ],
-                        innerRadius: 30,
-                        outerRadius: 100,
-                        paddingAngle: 5,
-                        cornerRadius: 5,
-                        cx: 150,
-                        cy: 150,
-                    },
-                ]}
-                width={400}
-                height={275}
-            />
-        ) : (
-            <div>Loading...</div>
-        )}
+      <PieChart
+        series={[
+          {
+            data: [
+              { id: 0, value: data.completed_count, label: '已完成' },
+              { id: 1, value: data.in_progress_count, label: '进行中' },
+              { id: 2, value: data.pending_count, label: '未处理' },
+            ],
+            innerRadius: 30,
+            outerRadius: 100,
+            paddingAngle: 5,
+            cornerRadius: 5,
+            cx: 150,
+            cy: 150,
+          },
+        ]}
+        width={400}
+        height={275}
+      />
     </Box>
   );
 }

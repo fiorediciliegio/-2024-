@@ -1,36 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams,useNavigate } from "react-router-dom";
-import Axios from "axios";
+import React from "react";
+import { useSearchParams} from "react-router-dom";
 import { Grid } from "@mui/material";
 import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
-
+import GaugeChart from "../components/GaugeChart.jsx";
+import LineChartSt from "../components/LineChartSt.jsx";
 
 
 export default function CostPage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
   const projectId = searchParams.get("projectId");
-  const [costInfo, setCostInfo] = useState(null);
 
-  const handleSelectProject = async (project) => {
-    try {
-      const response = await Axios.get(`http://47.123.7.53:8000/show_cost/${project}/`);
-      setCostInfo(response.data.projects_data);
-       // 更新路由参数
-       navigate(`?projectName=${project}`);
-    } catch (error) {
-      console.error("Error fetching cost:", error);
-    }
-  };
-  
-  useEffect(() => {
-    if (projectName) {
-      // 如果路由参数中存在项目名称，则调用 handleSelectProject 获取项目信息
-      handleSelectProject(projectName);
-    }
-  }, [projectName]); // 仅在 projectName 发生变化时执行 useEffect
 
   return (
     <Grid container spacing={2}>
@@ -53,7 +34,12 @@ export default function CostPage() {
           <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
         <Grid item container xs={10}>
-          <></>
+          <Grid item container xs={5}>
+              <GaugeChart/>
+          </Grid>
+          <Grid item container xs={7} >
+            <LineChartSt/>
+            </Grid>
         </Grid>
       </Grid>
     </Grid>
