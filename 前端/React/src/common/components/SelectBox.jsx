@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Box, TextField, MenuItem, Grid } from "@mui/material";
 
-export default function SelectBox({ label, set, value, onChange,width }) {
+export default function SelectBox({ label, set, value, onChange, width }) {
   return (
     <Grid
       container

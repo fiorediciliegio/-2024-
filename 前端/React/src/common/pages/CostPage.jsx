@@ -5,13 +5,12 @@ import NavBarRO from "../components/NavBarRO.jsx";
 import SideBar from "../components/SideBar.jsx";
 import GaugeChart from "../components/GaugeChart.jsx";
 import LineChartSt from "../components/LineChartSt.jsx";
-
+import CostTable from "../components/CostTable.jsx";
 
 export default function CostPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const projectName = searchParams.get("projectName");
   const projectId = searchParams.get("projectId");
-
 
   return (
     <Grid container spacing={2}>
@@ -33,13 +32,17 @@ export default function CostPage() {
         >
           <SideBar projectName={projectName} projectId={projectId}></SideBar>
         </Grid>
+        {/*主体*/}
         <Grid item container xs={10}>
-          <Grid item container xs={5}>
-              <GaugeChart/>
+          <Grid item container xs={7} direction="column" spacing={2}>
+            <Grid item>
+              <CostTable projectId={projectId} projectName={projectName}/></Grid>
+            <Grid item>
+              <LineChartSt/></Grid>
+           </Grid>
+          <Grid item container xs={5} spacing={2}>
+            <GaugeChart/>
           </Grid>
-          <Grid item container xs={7} >
-            <LineChartSt/>
-            </Grid>
         </Grid>
       </Grid>
     </Grid>
