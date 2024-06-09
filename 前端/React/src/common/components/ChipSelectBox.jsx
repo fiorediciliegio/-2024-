@@ -1,8 +1,9 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState} from 'react';
 import { useTheme } from '@mui/material/styles';
 import {Box,OutlinedInput,InputLabel, MenuItem, FormControl, Select,Chip, Grid } from '@mui/material';
 import axios from 'axios'; 
 import SaveButton from '../components/SaveButton.jsx';
+import useFetchData from '../hooks/useFetchData.js';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -27,19 +28,7 @@ function getStyles(name, personName, theme) {
 export default function ChipSelectBox({projectId}) {
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
-  const [people, setPeople] = useState([]); 
-
-  // 从后端获取人员列表
-  useEffect(() => {
-    axios
-      .get(`http://47.123.7.53:8000/person/list/`)
-      .then((res) => {
-        setPeople(res.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data from server", error);
-      });
-  }, []);
+  const { data: people, error } = useFetchData(`http://47.123.7.53:8000/person/list/`);
 
   const handleChange = (event) => {
     const {
@@ -68,6 +57,7 @@ export default function ChipSelectBox({projectId}) {
 
   return (
     <Grid container spacing={2}>
+       {error && <Grid item xs={12}><p>{error}</p></Grid>}
       <Grid item container xs={8} justifyContent="center" alignItems="center">
         <FormControl sx={{ m: 1, width: 600 }}>
           <InputLabel id="demo-multiple-chip-label">选择人员</InputLabel>

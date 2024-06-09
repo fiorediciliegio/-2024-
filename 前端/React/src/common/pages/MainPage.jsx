@@ -35,7 +35,8 @@ export default function MainPage() {
       <Grid item xs={12} spacing={2}>
         <NavBar title="ManageYourProject"></NavBar>
       </Grid>
-      <Grid item container spacing={2} margin={2}>
+      {/*主体*/}
+      <Grid item container spacing={2} margin={1}>
         <Grid item container xs={9} spacing={2} justifyContent="flex-end" alignItems="center">        
           {/* 项目表格 */}
           <Grid item xs={12}>
@@ -49,8 +50,8 @@ export default function MainPage() {
         <Grid
           item
           container
-          justifyContent="center"
-          alignItems="flex-start"
+          direction={"column"}
+          spacing={2}
           xs={3}
         >
           {/* 新建项目按钮 */}  

@@ -1,43 +1,21 @@
 import React from "react";
-import { useSearchParams} from "react-router-dom";
 import { Grid } from "@mui/material";
-import SideBar from "../components/SideBar.jsx";
-import NavBarRO from "../components/NavBarRO.jsx";
 import PersonList from "../components/PersonList4Pj.jsx";
 import BasicBarH from "../components/BarChartH.jsx";
 import ChipSelectBox from "../components/ChipSelectBox.jsx";
-
+import CommonPage from "../components/CommonPage.jsx";
+import useProjectParams from "../hooks/useProjectParams.js"; 
 
 export default function PersonnelPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const projectName = searchParams.get("projectName");
-  const projectId = searchParams.get("projectId");
-
+  const { projectName, projectId } = useProjectParams();
 
   return (
-    <Grid container spacing={2}>
-      {/*顶部导航栏 */}
-      <Grid item xs={12}>
-          <NavBarRO
-            title="ManageYourProject--人力资源"
-            projectName={projectName}
-          />
-      </Grid>
+    <CommonPage
+      pageName={"人力资源"} 
+      projectId={projectId}
+      projectName={projectName}>
+      {/*第一行 */}
       <Grid item container spacing={2}>
-        {/*侧边栏 */}
-        <Grid
-          item
-          container
-          justifyContent="center"
-          alignItems="flex-start"
-          xs={2}
-        >
-          <SideBar projectName={projectName} projectId={projectId}/>
-        </Grid>
-        {/*主要区域 */}
-        <Grid item container xs={10} spacing={2} direction="column">
-          {/*第一行 */}
-          <Grid item container spacing={2}>
             {/*现有人员列表 */}
             <Grid item container xs={5} marginTop={2} justifyContent="flex-start" alignItems="flex-start">
               <PersonList projectId={projectId}/>
@@ -54,8 +32,7 @@ export default function PersonnelPage() {
               <ChipSelectBox projectId={projectId}/>
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+    </CommonPage>   
   );
 }
+          

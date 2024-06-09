@@ -1,126 +1,49 @@
 import * as React from 'react';
-import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
-import {Paper,Grid} from '@mui/material';
+import { Box, Paper, Grid, CircularProgress, Alert } from '@mui/material';
+import GaugeItem from '../components/GaugeItem.jsx';
+import useFetchData from '../hooks/useFetchData.js';
 
-const settings1 = {
-  width: 200,
-  height: 200,
-  value: 60,
-  startAngle:-110,
-  endAngle:110,
-};
-const settings2 = {
-  width: 120,
-  height: 120,
-  value: 60,
-  startAngle:-110,
-  endAngle:110,
-};
+export default function GaugeChart({ projectId }) {
+  const { data, error} = useFetchData(`http://47.123.7.53:8000/cost/collect/total/${projectId}/`);
 
-export default function GaugChart() {
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height={400}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  // 计算总费用比例并格式化 ratio
+  const totalCostRatio = (data.TotalCost / data.TotalBudget) * 100;
+  const totalCostRatioStr = `${data.TotalCost}/${data.TotalBudget}`;
+
   return (
-    <Paper style={{ width: "100%", height: "100%", padding: "15px" }}>
-      <Grid container direction={"column"}>
-        {/*总造价*/}
-        <Grid item container xs={12} justifyContent="center"> 
-          <Gauge
-            {...settings1}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
+    <Grid container margin={1}>
+      <Paper style={{ width: "100%", height: "100%", padding: "15px" }} >
+        <Grid container direction={"column"}>
+          {/* 总造价 */}
+          <Grid item container xs={12} justifyContent="center">
+            <GaugeItem
+              size="large" label="总费用" value={totalCostRatio} ratio={totalCostRatioStr}
+            />
+          </Grid>
+          {/* 子项 */}
+          <Grid item container justifyContent={"space-between"}>
+          {Object.entries(data.detail).map(([expenseType, { totalbudget, totalcost }]) => (
+            <Grid key={expenseType} item container justifyContent="center" xs={4}>
+              <GaugeItem
+                size="small" label={expenseType} value={(totalcost / totalbudget) * 100}
+                ratio={`${totalcost}/${totalbudget}`}
+              />
+            </Grid>
+          ))}
+          </Grid>
         </Grid>
-        {/*第一行*/}
-        <Grid item container direction="row" spacing={1}>
-        <Gauge
-            {...settings2}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
-          <Gauge
-            {...settings2}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
-          <Gauge
-            {...settings2}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
-        </Grid>
-        {/*第二行*/}
-        <Grid item container direction="row" spacing={1}>
-        <Gauge
-            {...settings2}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
-          <Gauge
-            {...settings2}
-            cornerRadius="50%"
-            sx={(theme) => ({
-              [`& .${gaugeClasses.valueText}`]: {
-                fontSize: 40,
-              },
-              [`& .${gaugeClasses.valueArc}`]: {
-                fill: '#52b202',
-              },
-              [`& .${gaugeClasses.referenceArc}`]: {
-                fill: theme.palette.text.disabled,
-              },
-            })}
-          />
-        </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </Grid>
   );
 }
