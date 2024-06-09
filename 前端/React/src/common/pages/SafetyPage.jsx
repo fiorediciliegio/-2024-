@@ -1,19 +1,16 @@
 import React, { useState, useEffect} from "react";
 import axios from "axios";
-import { useSearchParams} from "react-router-dom";
 import { Grid,Paper,Typography,Box,Menu, MenuItem, ListItemText,Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
-import NavBarRO from "../components/NavBarRO.jsx";
-import SideBar from "../components/SideBar.jsx";
 import OpenButton from "../components/OpenButton.jsx";
 import CreateSafety from "../popups/CreateSafety.jsx";
 import CreateSafTem from "../popups/CreateSafTem.jsx";
 import TitlebarImageList from "../components/ImageList.jsx";
 import SafetyIssueList from "../components/SafetyIssueList.jsx";
+import CommonPage from "../components/CommonPage.jsx";
+import useProjectParams from "../hooks/useProjectParams.js"; 
 
 export default function SafetyPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const projectName = searchParams.get("projectName");
-  const projectId = searchParams.get("projectId");
+  const { projectName, projectId } = useProjectParams();
   const [templates, setTemplates] = useState([]);
   const [isTemplateDetailOpen, setIsTemplateDetailOpen] = useState(false);
 
@@ -78,24 +75,10 @@ export default function SafetyPage() {
   };
 
   return (
-    <Grid container spacing={2}>
-    {/* 顶部导航栏 */}
-    <Grid item xs={12}>
-      <NavBarRO
-            title="ManageYourProject--安全监测"
-            projectName={projectName}
-          /></Grid>
-    <Grid item container spacing={2}>
-      {/* 侧边栏 */}
-      <Grid
-        item
-        container
-        justifyContent="center"
-        alignItems="flex-start"
-        xs={2}
-      >
-        <SideBar projectName={projectName} projectId={projectId}/></Grid>
-      <Grid item container xs={10} spacing={2}>
+    <CommonPage
+      pageName={"安全监测"} 
+      projectId={projectId}
+      projectName={projectName}>
         {/*问题列表 */}
         <Grid item xs={5} justifyContent="flex-start" alignItems="flex-start">
           <SafetyIssueList projectId={projectId} projectName={projectName}/></Grid>
@@ -135,8 +118,6 @@ export default function SafetyPage() {
             </Grid>
           </Paper>
         </Grid>
-      </Grid>
-    </Grid>
     {/* 模板详细信息弹窗 */}
     <Dialog open={isTemplateDetailOpen} onClose={handleCloseTemplateDetail}>
         <DialogTitle>详细信息</DialogTitle>
@@ -179,6 +160,6 @@ export default function SafetyPage() {
           </MenuItem>
         </Menu>
       )}
-  </Grid>
+  </CommonPage>
 );
 }

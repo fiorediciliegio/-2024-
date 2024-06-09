@@ -1,19 +1,16 @@
 import React, { useState, useEffect} from "react";
 import axios from "axios";
-import { useSearchParams} from "react-router-dom";
 import { Grid,Paper,Typography,Box, Menu, MenuItem, ListItemText,Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
-import NavBarRO from "../components/NavBarRO.jsx";
-import SideBar from "../components/SideBar.jsx";
 import StackBar from "../components/BarChartSt.jsx";
 import ReportList from "../components/ReportList.jsx";
 import OpenButton from "../components/OpenButton.jsx";
 import CreateQuality from "../popups/CreateQuality.jsx";
 import CreateQuaTem from "../popups/CreateQuaTem.jsx";
+import CommonPage from "../components/CommonPage.jsx";
+import useProjectParams from "../hooks/useProjectParams.js"; 
 
 export default function QualityPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const projectName = searchParams.get("projectName");
-  const projectId = searchParams.get("projectId");
+  const { projectName, projectId } = useProjectParams();
   const [templates, setTemplates] = useState([]);
   const [isTemplateDetailOpen, setIsTemplateDetailOpen] = useState(false); // 控制模板详细信息弹窗显示与隐藏
   
@@ -78,27 +75,13 @@ export default function QualityPage() {
   };
 
   return (
-    <Grid container spacing={2}>
-      {/* 顶部导航栏 */}
-      <Grid item xs={12}>
-        <NavBarRO
-              title="ManageYourProject--质量监测"
-              projectName={projectName}
-            /></Grid>
-      <Grid item container spacing={2}>
-        {/* 侧边栏 */}
-        <Grid
-          item
-          container
-          justifyContent="center"
-          alignItems="flex-start"
-          xs={2}
-        >
-          <SideBar projectName={projectName} projectId={projectId}/></Grid>
-        <Grid item container xs={10} spacing={2}>
+    <CommonPage
+      pageName={"质量监测"} 
+      projectId={projectId}
+      projectName={projectName}>
           {/*柱状图 */}
           <Grid item container xs={5} spacing={2} justifyContent="flex-start" alignItems="flex-start">
-            <StackBar/></Grid>
+            <StackBar projectId={projectId}/></Grid>
           {/*质量清单 */}
           <Grid item container xs={7} spacing={2} justifyContent="flex-start" alignItems="flex-start">
             <ReportList projectId={projectId}/></Grid>
@@ -134,8 +117,6 @@ export default function QualityPage() {
               </Grid>
             </Paper>
           </Grid>
-        </Grid>
-      </Grid>
        {/* 模板详细信息弹窗 */}
        <Dialog open={isTemplateDetailOpen} onClose={handleCloseTemplateDetail}>
         <DialogTitle>详细信息</DialogTitle>
@@ -144,7 +125,6 @@ export default function QualityPage() {
               {selectedTemplate && (
                 <div>
                   <Typography variant="body1">模板名称: {selectedTemplate.name}</Typography>
-
                   {selectedTemplate.items && selectedTemplate.items.length > 0 ? (
                     <ul>
                       {selectedTemplate.items.map((item) => (
@@ -178,6 +158,6 @@ export default function QualityPage() {
           </MenuItem>
         </Menu>
       )}
-    </Grid>
+    </CommonPage>
   );
 }

@@ -134,7 +134,7 @@ export default function FileManager({ projectId }) {
 
   return (
     <div>
-      <Grid container spacing={2} >
+      <Grid container spacing={2} marginTop={1}>
           <input
             type="file"
             accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
@@ -143,7 +143,6 @@ export default function FileManager({ projectId }) {
             onChange={handleUpload}
           />
         <Grid item >
-          <Typography variant="h6">文件列表</Typography>
           <Paper elevation={3} style={{ maxHeight:600, width:800, overflow: 'auto' }} >
             <List>
               <ListItem>
