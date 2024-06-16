@@ -5,9 +5,14 @@ import BasicBarH from "../components/BarChartH.jsx";
 import ChipSelectBox from "../components/ChipSelectBox.jsx";
 import CommonPage from "../components/CommonPage.jsx";
 import useProjectParams from "../hooks/useProjectParams.js"; 
+import { useAuth } from '../hooks/AuthContext';
 
 export default function PersonnelPage() {
   const { projectName, projectId } = useProjectParams();
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isEmployee = user && user.level === '一般人员'; 
+  const isManager = user && user.level === '管理者'; 
 
   return (
     <CommonPage
@@ -28,9 +33,10 @@ export default function PersonnelPage() {
           {/*第二行 */}
           <Grid item container marginTop ={4} >
             {/*向项目中添加人员 */}
+            {isManager && 
             <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="center">
               <ChipSelectBox projectId={projectId}/>
-            </Grid>
+            </Grid>}
           </Grid>
     </CommonPage>   
   );

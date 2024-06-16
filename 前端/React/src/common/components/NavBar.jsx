@@ -1,23 +1,15 @@
-import * as React from "react";
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  IconButton,
-  Typography,
-  Menu,
-  Grid,
-  Container,
-  Avatar,
-  Tooltip,
-  MenuItem,
-} from "@mui/material";
+import React,{ useState} from "react";
+import {AppBar,Box,Toolbar, IconButton,Typography,Menu,Grid,Container, Button,
+  Avatar,Tooltip, MenuItem,Dialog,DialogTitle,DialogContent,DialogActions,} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { Link } from 'react-router-dom';
+import {lightBlue } from '@mui/material/colors';
 
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = [ "Account", "Logout"];
 
-export default function NavBar({ title }) {
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+export default function NavBar({ title, user, onLogout }) {
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -25,6 +17,19 @@ export default function NavBar({ title }) {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleMenuItemClick = (setting) => {
+    handleCloseUserMenu();
+    if (setting === "Account") {
+      setOpenDialog(true);
+    } else if (setting === "Logout") {
+      onLogout();
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   return (
@@ -57,9 +62,8 @@ export default function NavBar({ title }) {
                   edge="end"
                   color="inherit"
                   aria-label="close"
-                  onClick={() => {
-                    window.open("/", "_self");
-                  }}
+                  component={Link}
+                  to="/"
                 >
                   <HomeIcon />
                 </IconButton>
@@ -70,10 +74,8 @@ export default function NavBar({ title }) {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src="https://i.imgur.com/yXOvdOSs.jpg"
-                    />
+                    <Avatar sx={{ bgcolor: lightBlue[500] }}>
+                    {user.username.charAt(0)}</Avatar>
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -93,7 +95,7 @@ export default function NavBar({ title }) {
                   onClose={handleCloseUserMenu}
                 >
                   {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <MenuItem key={setting} onClick={() => handleMenuItemClick(setting)}>
                       <Typography textAlign="center">{setting}</Typography>
                     </MenuItem>
                   ))}
@@ -103,6 +105,24 @@ export default function NavBar({ title }) {
           </Grid>
         </Toolbar>
       </Container>
+       {/* 用户信息弹窗 */}
+       <Dialog open={openDialog} onClose={handleCloseDialog} 
+        PaperProps={{
+          sx: {
+            width: '30%', // 控制宽度
+          },
+        }}>
+        <DialogTitle>账户信息</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle1">用户名: {user.username}</Typography>
+          <Typography variant="subtitle1">用户级别: {user.level}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            关闭
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 }

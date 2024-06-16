@@ -8,22 +8,54 @@ import QualityPage from "./common/pages/QualityPage.jsx";
 import SafetyPage from "./common/pages/SafetyPage.jsx";
 import DocumentPage from "./common/pages/DocumentPage.jsx";
 import LoginPage from "./common/pages/LoginPage.jsx";
+import { AuthProvider } from './common/hooks/AuthContext';
+import ProtectedRoute from './common/hooks/ProtectedRoute';
+
 
 function App() {
   return (
+    <AuthProvider>
       <Router>
         <Routes>
           <Route path="/Login" element={<LoginPage />} />
-          <Route path="/" element={<MainPage />} />
-          <Route path="/PlanPage" element={<PlanPage />} />
-          <Route path="/PersonnelPage" element={<PersonnelPage />} />
-          <Route path="/CostPage" element={<CostPage />} />
-          <Route path="/QualityPage" element={<QualityPage />} />
-          <Route path="/SafetyPage" element={<SafetyPage />} />
-          <Route path="/File" element={<DocumentPage />} />
+          <Route path="/" element={
+              <ProtectedRoute>
+                <MainPage />
+              </ProtectedRoute>
+            } />
+          <Route path="/PlanPage" element={
+              <ProtectedRoute>
+                <PlanPage />
+              </ProtectedRoute>
+            } />
+          <Route path="/PersonnelPage" element={
+            <ProtectedRoute>
+              <PersonnelPage />
+            </ProtectedRoute>
+            } />
+          <Route path="/CostPage" element={
+            <ProtectedRoute>
+              <CostPage />
+            </ProtectedRoute>
+            } />
+          <Route path="/QualityPage" element={
+            <ProtectedRoute>
+              <QualityPage />
+            </ProtectedRoute>
+            } />
+          <Route path="/SafetyPage" element={
+            <ProtectedRoute>
+            <SafetyPage />
+            </ProtectedRoute>
+            } />
+          <Route path="/File" element={
+            <ProtectedRoute>
+            <DocumentPage />
+            </ProtectedRoute>
+            } />
         </Routes>
       </Router>
-
+      </AuthProvider>
   );
 }
 

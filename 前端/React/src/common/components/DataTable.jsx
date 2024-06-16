@@ -10,7 +10,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SearchBox from './SearchBox';
 
-
 const DataTable = ({ columns, data, onDelete, searchLabel, onRowClick }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);

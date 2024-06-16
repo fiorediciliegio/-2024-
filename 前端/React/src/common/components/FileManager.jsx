@@ -5,6 +5,7 @@ import { Button, List, ListItem, ListItemText, ListItemSecondaryAction,
 import { CloudUpload, CloudDownload, Visibility, Close, Delete } from '@mui/icons-material';
 import MuiAlert from '@mui/material/Alert';
 import axios from 'axios';
+import { useAuth } from '../hooks/AuthContext';
 
 export default function FileManager({ projectId }) {
   const [files, setFiles] = useState([]);
@@ -15,6 +16,9 @@ export default function FileManager({ projectId }) {
   const [searchQuery, setSearchQuery] = useState('');
   // 在 FileManager 组件中添加一个新的状态用于跟踪上传进度
   const [uploadProgress, setUploadProgress] = useState(0);
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
 
   // 获取已上传的文件列表
   useEffect(() => {
@@ -137,7 +141,7 @@ export default function FileManager({ projectId }) {
       <Grid container spacing={2} marginTop={1}>
           <input
             type="file"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png"
+            accept=".pdf,.txt,.jpg,.jpeg,.png"
             style={{ display: 'none' }}
             id="file-upload"
             onChange={handleUpload}
@@ -186,14 +190,16 @@ export default function FileManager({ projectId }) {
                       <Typography variant="body2">下载</Typography>
                     </Grid>
                     {/*删除*/}
+                    {isManager && 
                     <Grid item>
                       <IconButton aria-label="delete" onClick={handleDelete} disabled={selectedFiles.length === 0}>
                         <Delete />
                       </IconButton>
-                    </Grid>
+                    </Grid>}
+                    {isManager &&
                     <Grid item>
                       <Typography variant="body2">删除</Typography>
-                    </Grid>
+                    </Grid>}
                   </Grid>
                 </ListItemSecondaryAction>
               </ListItem>
