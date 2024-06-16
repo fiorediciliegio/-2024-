@@ -11,6 +11,7 @@ import { pjcolumns } from "../constants/PROJECT_INFO.js";
 import SearchBox from "./SearchBox.jsx";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useAuth } from '../hooks/AuthContext';
 
 export default function ProjectTable({ onRowClick }) {
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -19,6 +20,9 @@ export default function ProjectTable({ onRowClick }) {
   const [rows, setRows] = useState([]);
   const [deleteId, setDeleteId] = useState(null); // 用于存储要删除的项目 ID
   const [anchorEl, setAnchorEl] = useState(null); // Anchor element for the menu
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
 
   //发送请求到后端获得数据
   useEffect(() => {
@@ -155,13 +159,14 @@ export default function ProjectTable({ onRowClick }) {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
        {/* 删除确认弹窗 */}
+       {isManager && 
        <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleDelete}>删除项目</MenuItem>
-      </Menu>
+      </Menu>}
     </Paper>
   );
 }

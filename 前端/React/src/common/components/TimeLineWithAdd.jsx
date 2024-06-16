@@ -10,7 +10,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import { useAuth } from '../hooks/AuthContext';
 
 export default function TimeLineWithAdd ({pjID}) {
   const [events, setEvents] = useState([]);
@@ -22,6 +22,9 @@ export default function TimeLineWithAdd ({pjID}) {
   const [anchorEl, setAnchorEl] = useState(null); // 菜单的锚元素
   const [selectedNodeId, setSelectedNodeId] = useState(null); // 存储选择的节点ID
   const [selectedNodeStatus, setSelectedNodeStatus] = useState(""); // 存储选择的节点ID
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
   
   const fetchEvents = () => {
     if (!pjID) return;
@@ -148,18 +151,20 @@ export default function TimeLineWithAdd ({pjID}) {
               <p>{event.eventdescription}</p>
               <p>{dayjs(event.eventdate).format('YYYY-MM-DD')}</p> {/* 使用 dayjs 格式化日期 */}
               <p>Status: {event.eventstatus}</p> {/* 显示状态 */}
+              {isManager && 
               <IconButton onClick={(e) => handleMenuOpen(e, event.eventid, event.eventstatus)}>
                 <MoreVertIcon />
-              </IconButton>
+              </IconButton>}
             </items>
           ))}
         </Timeline>
       </Grid>
+      {isManager && 
       <Grid item container justifyContent="flex-end">
         <IconButton onClick={handleOpenDialog}>
           <AddCircleIcon />
         </IconButton>
-      </Grid>
+      </Grid>}
       <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>创建节点</DialogTitle>
         <DialogContent>

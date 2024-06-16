@@ -4,15 +4,18 @@ import { Grid,Paper,Typography,Box,Menu, MenuItem, ListItemText,Dialog, DialogTi
 import OpenButton from "../components/OpenButton.jsx";
 import CreateSafety from "../popups/CreateSafety.jsx";
 import CreateSafTem from "../popups/CreateSafTem.jsx";
-import TitlebarImageList from "../components/ImageList.jsx";
 import SafetyIssueList from "../components/SafetyIssueList.jsx";
 import CommonPage from "../components/CommonPage.jsx";
 import useProjectParams from "../hooks/useProjectParams.js"; 
+import { useAuth } from '../hooks/AuthContext';
 
 export default function SafetyPage() {
   const { projectName, projectId } = useProjectParams();
   const [templates, setTemplates] = useState([]);
   const [isTemplateDetailOpen, setIsTemplateDetailOpen] = useState(false);
+    // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
 
   useEffect(() => {
     fetchTemplates();
@@ -80,12 +83,8 @@ export default function SafetyPage() {
       projectId={projectId}
       projectName={projectName}>
         {/*问题列表 */}
-        <Grid item xs={5} justifyContent="flex-start" alignItems="flex-start">
-          <SafetyIssueList projectId={projectId} projectName={projectName}/></Grid>
-        {/*安全照片集合 */}
-        <Grid item xs={7} justifyContent="flex-start" alignItems="flex-start">
-          <Typography>安全现场照片</Typography>
-          <TitlebarImageList projectId={projectId}/></Grid>
+        <Grid item justifyContent="flex-start" alignItems="flex-start" xs={4}>
+          <SafetyIssueList projectId={projectId} projectName={projectName} /></Grid>
           {/*创建模板及报告 */}
         <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="flex-start">
           <Paper style={{ width: "95%", height: "100%", padding: "15px" }}>
@@ -111,9 +110,10 @@ export default function SafetyPage() {
                 <Grid item>
                   <OpenButton children={"新建安全报告"} onClick={openCreateSafety}/>
                   {isCreateSafetyOpen && <CreateSafety onClose={closeCreateQuality} templates={templates} projectId={projectId}/>}</Grid>
+                  {isManager && 
                 <Grid item>
                   <OpenButton children={"新建模板"} onClick={openCreateSafTem}/>
-                  {isCreateSafTemOpen && <CreateSafTem onClose={closeCreateSafTem} projectId={projectId}/>}</Grid>
+                  {isCreateSafTemOpen && <CreateSafTem onClose={closeCreateSafTem} projectId={projectId}/>}</Grid>}
               </Grid> 
             </Grid>
           </Paper>

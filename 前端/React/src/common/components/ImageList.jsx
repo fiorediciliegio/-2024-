@@ -7,31 +7,66 @@ import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import InfoIcon from '@mui/icons-material/Info';
 
+axios.interceptors.request.use(request => {
+  console.log('Starting Request', request);
+  return request;
+});
+
+axios.interceptors.response.use(response => {
+  console.log('Response:', response);
+  return response;
+}, error => {
+  console.error('Error Response:', error);
+  return Promise.reject(error);
+});
+
 export default function TitlebarImageList({ projectId }) {
   const [itemData, setItemData] = useState([]);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImageMetadata = async () => {
       try {
-        const response = await axios.get(`http://47.123.7.53:8000/safety/report/image/${projectId}/metadata/`);
+        const response = await axios.get(`http://localhost:8000/safety/report/image/${projectId}/metadata/`);
         const metadata = response.data.images;
-        setItemData(metadata);
-        // 请求每个图像文件
-        for (const item of metadata) {
-          const imgResponse = await axios.get(`http://47.123.7.53:8000${item.img_url}`, {
-            responseType: 'blob'
-          });
-          const imgUrl = URL.createObjectURL(imgResponse.data);
-          setItemData(prevState => prevState.map(data => data.img_url === item.img_url ? { ...data, img: imgUrl } : data));
-        }
+
+        const imagePromises = metadata.map(async (item) => {
+          try {
+            const imgResponse = await axios.get(`http://localhost:8000${item.img_url}`, {
+              responseType: 'blob'
+            });
+            const imgUrl = URL.createObjectURL(imgResponse.data);
+            return { ...item, img: imgUrl };
+          } catch (error) {
+            console.error(`Error fetching image ${item.img_url}:`, error);
+            return { ...item, img: null };
+          }
+        });
+
+        const updatedData = await Promise.all(imagePromises);
+        setItemData(updatedData);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching the images:', error);
+        setLoading(false);
       }
     };
+
     fetchImageMetadata();
+
+    // Clean up URL object references when the component unmounts
+    return () => {
+      itemData.forEach(item => {
+        if (item.img) {
+          URL.revokeObjectURL(item.img);
+        }
+      });
+    };
   }, [projectId]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ImageList sx={{ width: 500, height: 450 }}>
@@ -42,10 +77,10 @@ export default function TitlebarImageList({ projectId }) {
         <ImageListItem key={index}>
           {item.img ? (
             <img
-            src={item.img}
-            alt={item.title || 'Image'}
-            loading="lazy"
-            onError={(e) => { e.target.onerror = null; e.target.src = "fallback_image_url"; }} 
+              src={item.img}
+              alt={item.title || 'Image'}
+              loading="lazy"
+              onError={(e) => { e.target.onerror = null; e.target.src = "fallback_image_url"; }} 
             />
           ) : (
             <div style={{ width: 248, height: 248, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>

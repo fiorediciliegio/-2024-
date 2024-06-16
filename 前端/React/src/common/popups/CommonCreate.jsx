@@ -21,7 +21,7 @@ const CommonCreate = ({ title, fields, onClose, onSubmit }) => {
               {field.component}
             </Grid>
           ))}
-          <Grid item container justifyContent="center" alignItems="center">
+          <Grid item container justifyContent="flex-end" alignItems="center" marginRight={4}>
             <SaveButton children="保存" onClick={onSubmit} />
           </Grid>
         </Grid>

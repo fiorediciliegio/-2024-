@@ -8,11 +8,15 @@ import CreateQuality from "../popups/CreateQuality.jsx";
 import CreateQuaTem from "../popups/CreateQuaTem.jsx";
 import CommonPage from "../components/CommonPage.jsx";
 import useProjectParams from "../hooks/useProjectParams.js"; 
+import { useAuth } from '../hooks/AuthContext';
 
 export default function QualityPage() {
   const { projectName, projectId } = useProjectParams();
   const [templates, setTemplates] = useState([]);
   const [isTemplateDetailOpen, setIsTemplateDetailOpen] = useState(false); // 控制模板详细信息弹窗显示与隐藏
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
   
   useEffect(() => {
     fetchTemplates();
@@ -110,15 +114,16 @@ export default function QualityPage() {
                   <Grid item>
                     <OpenButton children={"新建质检报告"} onClick={openCreateQuality}/>
                     {isCreateQualityOpen && <CreateQuality onClose={closeCreateQuality} templates={templates} projectId={projectId}/>}</Grid>
+                    {isManager && 
                   <Grid item>
                     <OpenButton children={"新建模板"} onClick={openCreateQuaTem}/>
-                    {isCreateQuaTemOpen && <CreateQuaTem onClose={closeCreateQuaTem} projectId={projectId}/>}</Grid>
+                    {isCreateQuaTemOpen && <CreateQuaTem onClose={closeCreateQuaTem} projectId={projectId}/>}</Grid>}
                 </Grid> 
               </Grid>
             </Paper>
           </Grid>
        {/* 模板详细信息弹窗 */}
-       <Dialog open={isTemplateDetailOpen} onClose={handleCloseTemplateDetail}>
+       <Dialog open={isTemplateDetailOpen} onClose={handleCloseTemplateDetail} >
         <DialogTitle>详细信息</DialogTitle>
         <DialogContent>
           <DialogContentText>

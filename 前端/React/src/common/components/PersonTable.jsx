@@ -10,6 +10,7 @@ import { percolumns } from "../constants/PERSON_INFO.js";
 import SearchBox from "./SearchBox.jsx";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useAuth } from '../hooks/AuthContext';
 
 export default function PersonTable() {
   const [searchQuery, setSearchQuery] = useState(""); // 用于保存搜索词
@@ -18,6 +19,9 @@ export default function PersonTable() {
   const [rows, setRows] = useState([]);
   const [deleteId, setDeleteId] = useState(null); // 用于存储要删除的人员 ID
   const [anchorEl, setAnchorEl] = useState(null); // 弹窗
+  // 根据用户级别决定按钮的可用性
+  const { user } = useAuth();
+  const isManager = user && user.level === '管理者'; 
 
   //发送请求到后端获得数据
   useEffect(() => {
@@ -148,13 +152,14 @@ export default function PersonTable() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
       {/* 删除确认弹窗 */}
+      {isManager && 
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleDelete}>删除人员</MenuItem>
-      </Menu>
+      </Menu>}
     </Paper>
   );
 }

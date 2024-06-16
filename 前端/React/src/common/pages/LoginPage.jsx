@@ -1,15 +1,28 @@
 import React, { useState } from "react";
 import { Grid, Paper, TextField, Button, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/AuthContext';
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = () => {
-    // 实现登录逻辑，这里仅打印用户名和密码
-    console.log("Username:", username);
-    console.log("Password:", password);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://47.123.7.53:8000/login/', { username, password });
+      if (response.status === 200){
+        const { username, level } = response.data;
+        login({ username, level });  // 将用户数据传递给登录函数
+        navigate('/');// 登录成功后跳转到 MainPage
+      }
+    } catch (error) {
+      setError("用户名或密码错误");
+    }
   };
 
   return (
@@ -73,6 +86,7 @@ export default function LoginPage() {
           >
             登录
           </Button>
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
         </Paper>
       </Grid>
     </Grid>
