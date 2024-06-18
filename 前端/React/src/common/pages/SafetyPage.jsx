@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect,useRef} from "react";
 import axios from "axios";
 import { Grid,Paper,Typography,Box,Menu, MenuItem, ListItemText,Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import OpenButton from "../components/OpenButton.jsx";
@@ -16,6 +16,8 @@ export default function SafetyPage() {
     // 根据用户级别决定按钮的可用性
   const { user } = useAuth();
   const isManager = user && user.level === '管理者'; 
+  
+  const safetyIssueListRef = useRef(null);
 
   useEffect(() => {
     fetchTemplates();
@@ -33,6 +35,9 @@ export default function SafetyPage() {
   };
   const closeCreateQuality = () => {
     setIsCreateSafetyOpen(false);
+    if (safetyIssueListRef.current) {
+      safetyIssueListRef.current.refreshData(); 
+    };
   };
   
   //管理新建模板弹窗
@@ -42,6 +47,7 @@ export default function SafetyPage() {
    };
    const closeCreateSafTem = () => {
     setIsCreateSafTemOpen(false);
+    fetchTemplates();
   };
 
   //处理模板详细信息显示
@@ -84,7 +90,7 @@ export default function SafetyPage() {
       projectName={projectName}>
         {/*问题列表 */}
         <Grid item justifyContent="flex-start" alignItems="flex-start" xs={4}>
-          <SafetyIssueList projectId={projectId} projectName={projectName} /></Grid>
+          <SafetyIssueList projectId={projectId} projectName={projectName} ref={safetyIssueListRef}/></Grid>
           {/*创建模板及报告 */}
         <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="flex-start">
           <Paper style={{ width: "95%", height: "100%", padding: "15px" }}>

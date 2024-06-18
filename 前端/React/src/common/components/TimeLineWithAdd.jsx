@@ -12,7 +12,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from '../hooks/AuthContext';
 
-export default function TimeLineWithAdd ({pjID}) {
+export default function TimeLineWithAdd ({pjID, onTimelineUpdate}) {
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false); // 控制对话框的打开和关闭
   const [newEvent, setNewEvent] = useState("");
@@ -69,6 +69,9 @@ export default function TimeLineWithAdd ({pjID}) {
     setNewEventStatus("未处理");
       // 关闭对话框后重新获取节点列表
     fetchEvents();
+    if (onTimelineUpdate) {
+      onTimelineUpdate();
+    };
   };
   // 新建节点
   const handleSaveEvent = async () => {
@@ -116,6 +119,9 @@ export default function TimeLineWithAdd ({pjID}) {
       await axios.post("http://47.123.7.53:8000/projectnode/delete/", { pjn_id: selectedNodeId });
       // 删除成功后重新获取事件列表
       fetchEvents();
+      if (onTimelineUpdate) {
+        onTimelineUpdate();
+      };
     } catch (error) {
       console.error("删除事件出错:", error);
     }
@@ -130,6 +136,9 @@ export default function TimeLineWithAdd ({pjID}) {
       .then(() => {
         handleMenuClose();
         fetchEvents(); 
+        if (onTimelineUpdate) {
+          onTimelineUpdate();
+        };
       })
       .catch((error) => {
         console.error("Error updating event status", error);
@@ -230,5 +239,5 @@ export default function TimeLineWithAdd ({pjID}) {
       </Menu>
     </Grid>
   );
-};
+}
 

@@ -4,14 +4,14 @@ import { Paper, Table, TableCell, TableContainer,Grid,TableRow, Box, Button,
 import SearchBox from '../components/SearchBox';
 import CreateCost from '../popups/CreateCost';
 import OpenButton from '../components/OpenButton.jsx';
-import axios from 'axios';
+import Axios from 'axios';
 
 const columns = [
   { id: 'name', label: '成本名称', minWidth: 170 },
   { id: 'date', label: '日期', minWidth: 100, align: 'right' },
 ];
 
-export default function CostTable({projectId, projectName}) {
+export default function CostTable({projectId, projectName, onUpdate}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,17 +19,20 @@ export default function CostTable({projectId, projectName}) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCost, setSelectedCost] = useState(null);
 
-//获得成本列表数据
-  useEffect(() => {
-    axios.get(`http://47.123.7.53:8000/cost/list/${projectId}/`)
-      .then((res) => {
-        setRows(res.data.costs);
-        setLoading(false);
-      })
-      .catch((error) => {
+//获得成本列表数据  
+const fetchCostData =async(projectId)=>{
+  try{
+    const res = await Axios.get(`http://47.123.7.53:8000/cost/list/${projectId}/`);
+      setRows(res.data.costs);
+      setLoading(false);
+      }catch(error) {
         setError('Error fetching data from server');
         setLoading(false);
-      });
+      }
+  };
+
+  useEffect(() => {
+    fetchCostData(projectId)
   }, [projectId]);
 
   //管理新建成本弹窗
@@ -39,6 +42,10 @@ export default function CostTable({projectId, projectName}) {
    };
    const closeCreateCost = () => {
     setIsCreatCostOpen(false);
+    fetchCostData(projectId);
+    if (onUpdate) {
+      onUpdate();
+    };
   };
 
   //管理成本单信息弹窗

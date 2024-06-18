@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import OpenButton from "../components/OpenButton.jsx";
@@ -16,6 +16,11 @@ export default function MainPage() {
   const handleRowClick = (url) => {
     navigate(url);
   };
+
+  // 使用 useRef 来创建表格组件的引用
+  const projectTableRef = useRef(null);
+  const personTableRef = useRef(null);
+
     // 根据用户级别决定按钮的可用性
   const isManager = user && user.level === '管理者'; 
 
@@ -26,6 +31,10 @@ export default function MainPage() {
   };
   const closeCreatePj = () => {
     setIsCreatePjOpen(false);
+    // 在关闭项目弹窗时更新 ProjectTable 的数据
+    if (projectTableRef.current) {
+      projectTableRef.current.refreshData(); // 假设 refreshData 是 ProjectTable 中的方法
+    }
   };
     //管理新建人员弹窗
   const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
@@ -34,6 +43,10 @@ export default function MainPage() {
   };
   const closeCreatePerson = () => {
     setIsCreatePersonOpen(false);
+     // 在关闭人员弹窗时更新 PersonTable 的数据
+     if (personTableRef.current) {
+      personTableRef.current.refreshData(); // 假设 refreshData 是 PersonTable 中的方法
+    }
   };
   return (
     <Grid container spacing={2}>
@@ -46,11 +59,11 @@ export default function MainPage() {
         <Grid item container xs={9} spacing={2} justifyContent="flex-end" alignItems="center">        
           {/* 项目表格 */}
           <Grid item xs={12}>
-            <ProjectTable onRowClick={handleRowClick}/>
+            <ProjectTable  ref={projectTableRef} onRowClick={handleRowClick}/>
           </Grid>
           {/*人员表格 */}
           <Grid item xs={12}>
-            <PersonTable />
+            <PersonTable ref={personTableRef}/>
           </Grid>
         </Grid>
         <Grid

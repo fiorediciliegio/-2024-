@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,forwardRef, useImperativeHandle  } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from '@mui/material';
@@ -14,7 +14,6 @@ function createData(qrname, qrpart, qrevaluation, qrins_date, more) {
     more,
   };
 }
-
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
@@ -93,11 +92,11 @@ Row.propTypes = {
   }).isRequired,
 };
 
-export default function ReportList({projectId}) {
+const ReportList = forwardRef((props, ref) => {
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    axios.get(`http://47.123.7.53:8000/quality/report/list/${projectId}/`) 
+  const fetchData =()=>{
+    axios.get(`http://47.123.7.53:8000/quality/report/list/${props.projectId}/`) 
       .then(response => {
         const fetchedData = response.data.map(item => 
           createData(
@@ -118,7 +117,18 @@ export default function ReportList({projectId}) {
       .catch(error => {
         console.error("Error fetching data: ", error);
       });
-  }, [projectId]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
 
   return (
     <Box style={{
@@ -149,4 +159,5 @@ export default function ReportList({projectId}) {
       </TableContainer>
     </Box>
   );
-}
+});
+export default ReportList;

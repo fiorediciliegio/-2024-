@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useTheme } from '@mui/material/styles';
 import {Box,OutlinedInput,InputLabel, MenuItem, FormControl, Select,Chip, Grid } from '@mui/material';
 import axios from 'axios'; 
@@ -25,11 +25,15 @@ function getStyles(name, personName, theme) {
   };
 }
 
-export default function ChipSelectBox({projectId}) {
+export default function ChipSelectBox({projectId, onUpdate}) {
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
-  const { data: people, error } = useFetchData(`http://47.123.7.53:8000/person/list/`);
-
+  const { data: people, error, fetchData } = useFetchData(`http://47.123.7.53:8000/person/list/`);
+  
+  useEffect(() => { 
+    fetchData(); 
+  }, []);
+  
   const handleChange = (event) => {
     const {
       target: { value },
@@ -47,6 +51,9 @@ export default function ChipSelectBox({projectId}) {
       })
       .then((res) => {
         console.log("Person added to project successfully:", res.data);
+        if (onUpdate) {
+          onUpdate();
+        };
         //重置选择框
         setPersonName([]);
       })
