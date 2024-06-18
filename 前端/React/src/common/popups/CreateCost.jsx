@@ -127,7 +127,7 @@ const onSubmit = () => handleSubmit(costReport, `http://47.123.7.53:8000/cost/ad
       title="新建成本单"
       fields={fields}
       onClose={onClose}
-      onSubmit={handleSubmit}>
+      onSubmit={onSubmit}>
         {loading && <p>正在提交...</p>}
         {error && <p style={{ color: 'red' }}>提交失败: {error.message}</p>}
     </CommonCreate>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect,useRef} from "react";
 import axios from "axios";
 import { Grid,Paper,Typography,Box, Menu, MenuItem, ListItemText,Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import StackBar from "../components/BarChartSt.jsx";
@@ -17,6 +17,9 @@ export default function QualityPage() {
   // 根据用户级别决定按钮的可用性
   const { user } = useAuth();
   const isManager = user && user.level === '管理者'; 
+
+  const reportListRef = useRef(null);
+  const stackBarRef = useRef(null);
   
   useEffect(() => {
     fetchTemplates();
@@ -34,6 +37,12 @@ export default function QualityPage() {
   };
   const closeCreateQuality = () => {
     setIsCreateQualityOpen(false);
+    if (reportListRef.current) {
+      reportListRef.current.refreshData(); 
+    };
+    if (stackBarRef.current) {
+      stackBarRef.current.refreshData(); 
+    };
   };
   
   //管理新建模板弹窗
@@ -43,6 +52,7 @@ export default function QualityPage() {
    };
    const closeCreateQuaTem = () => {
     setIsCreateQuaTemOpen(false);
+    fetchTemplates();
   };
 
   // 处理模板详细信息显示
@@ -85,10 +95,10 @@ export default function QualityPage() {
       projectName={projectName}>
           {/*柱状图 */}
           <Grid item container xs={5} spacing={2} justifyContent="flex-start" alignItems="flex-start">
-            <StackBar projectId={projectId}/></Grid>
+            <StackBar projectId={projectId} ref={stackBarRef}/></Grid>
           {/*质量清单 */}
           <Grid item container xs={7} spacing={2} justifyContent="flex-start" alignItems="flex-start">
-            <ReportList projectId={projectId}/></Grid>
+            <ReportList projectId={projectId} ref={reportListRef}/></Grid>
             {/*创建模板及报告 */}
           <Grid item container xs={12} spacing={2} justifyContent="flex-start" alignItems="flex-start">
             <Paper style={{ width: "95%", height: "100%", padding: "15px" }}>

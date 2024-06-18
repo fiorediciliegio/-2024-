@@ -1,11 +1,19 @@
-import * as React from 'react';
+import React,{ useEffect, forwardRef, useImperativeHandle }  from 'react';
 import { Box, Paper, Grid, CircularProgress, Alert } from '@mui/material';
 import GaugeItem from '../components/GaugeItem.jsx';
 import useFetchData from '../hooks/useFetchData.js';
 
-export default function GaugeChart({ projectId }) {
-  const { data, error} = useFetchData(`http://47.123.7.53:8000/cost/collect/total/${projectId}/`);
-
+const GaugeChart = forwardRef((props,ref) => {
+  const { data, error, fetchData} = useFetchData(`http://47.123.7.53:8000/cost/collect/total/${props.projectId}/`);
+  useEffect(() => {
+    fetchData();
+  }, []);
+   // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
   if (error) {
     return <Alert severity="error">{error}</Alert>;
   }
@@ -46,4 +54,5 @@ export default function GaugeChart({ projectId }) {
       </Paper>
     </Grid>
   );
-}
+});
+export default GaugeChart;

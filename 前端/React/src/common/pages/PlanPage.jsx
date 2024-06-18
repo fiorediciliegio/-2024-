@@ -1,5 +1,5 @@
-import React, { useState, useEffect  } from "react";
-import { useSearchParams,useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { Grid } from "@mui/material";
 import SideBar from "../components/SideBar.jsx";
@@ -13,10 +13,10 @@ import { useAuth } from '../hooks/AuthContext';
 export default function PlanPage() {
   const { user } = useAuth();
   const { logout } = useAuth(); 
-  //获取项目信息
   const navigate = useNavigate();
   const { projectName, projectId } = useProjectParams();
   const [selectedProjectInfo, setSelectedProjectInfo] = useState(null);
+  const basicPieRef = useRef(null); // 创建 BasicPie 组件的 ref
 
   const handleSelectProject = async (projectName, projectId) => {
     try {
@@ -31,6 +31,12 @@ export default function PlanPage() {
   useEffect(() => {
       handleSelectProject(projectName, projectId);
   }, [projectName, projectId]); // 仅在 projectName 发生变化时执行 useEffect
+
+  const handleTimelineUpdate = () => {
+    if (basicPieRef.current) {
+      basicPieRef.current.refreshData(); // 通过 ref 调用 BasicPie 组件内部的 fetchData 函数
+    }
+  };
 
   return (
     <Grid container spacing={2} >
@@ -60,7 +66,7 @@ export default function PlanPage() {
         <Grid item container xs={6} direction="column" spacing={2} >
            {/* 图表 */}
           <Grid item container justifyContent="center" alignContent="center">
-          <BasicPie pjID={projectId}/>
+          <BasicPie pjID={projectId}  ref={basicPieRef}/>
           </Grid>
             {/* 项目信息展示框 */}
           <Grid item>
@@ -79,7 +85,7 @@ export default function PlanPage() {
         <Grid item container xs={4} alignItems="flex-start" direction="column">
           <p>节点时间轴：</p>
           <Grid item>
-            <TimeLineWithAdd pjID={projectId}/>
+            <TimeLineWithAdd pjID={projectId} onTimelineUpdate={handleTimelineUpdate} />
           </Grid>
         </Grid>
       </Grid>

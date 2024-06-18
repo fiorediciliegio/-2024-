@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, CircularProgress, Alert } from "@mui/material";
 import useFetchData from '../hooks/useFetchData.js';
 
-export default function BasicPie({ pjID }) {
-  const { data, error } = useFetchData(`http://47.123.7.53:8000/projectnode/collect/${pjID}/`);
+const BasicPie = forwardRef((props,ref) => {
+  const { data, error, fetchData} = useFetchData(`http://47.123.7.53:8000/projectnode/collect/${props.pjID}/`);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
+
 
   if (error) {
     return <Alert severity="error">{error}</Alert>;
@@ -39,7 +51,7 @@ export default function BasicPie({ pjID }) {
             ],
             innerRadius: 30,
             outerRadius: 100,
-            paddingAngle: 5,
+            paddingAngle: 0,
             cornerRadius: 5,
             cx: 150,
             cy: 150,
@@ -50,4 +62,5 @@ export default function BasicPie({ pjID }) {
       />
     </Box>
   );
-}
+});
+export default BasicPie;

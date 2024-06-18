@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React, { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, CircularProgress, Alert, Grid,Typography } from '@mui/material';
 import useFetchData from '../hooks/useFetchData.js';
@@ -34,8 +34,17 @@ const customize = {
   stackingOrder: 'descending',
 };
 
-export default function LineChartSt({projectId}) {
-  const { data, error } = useFetchData(`http://47.123.7.53:8000/cost/collect/monthly/${projectId}/`);
+const LineChartSt = forwardRef((props,ref) => {
+  const { data, error, fetchData } = useFetchData(`http://47.123.7.53:8000/cost/collect/monthly/${props.projectId}/`);
+  useEffect(() => {
+    fetchData();
+  }, []);
+   // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
 
   if (error) {
     return <Alert severity="error">{error}</Alert>;
@@ -101,4 +110,5 @@ export default function LineChartSt({projectId}) {
       </Grid>
     </Grid>
   );
-}
+});
+export default LineChartSt;

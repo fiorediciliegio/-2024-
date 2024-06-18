@@ -1,22 +1,33 @@
-import React from 'react';
+import React,{ useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Box, CircularProgress, Alert } from "@mui/material";
 import { BarChart } from '@mui/x-charts/BarChart';
 import useFetchData from '../hooks/useFetchData.js';
 
-const chartSetting = {
-  xAxis: [
-    {
-      label: '人员数量（名）',
-    },
-  ],
-  width: 500,
-  height: 400,
-  margin: { bottom: 60, left: 75, right: 5 },
-};
+  const chartSetting = {
+    xAxis: [
+      {
+        label: '人员数量（名）',
+      },
+    ],
+    width: 500,
+    height: 400,
+    margin: { bottom: 60, left: 75, right: 5 },
+  };
 
-export default function BasicBarH({ pjID }) {
-  const { data, error } = useFetchData(`http://47.123.7.53:8000/person/project/collect/${pjID}/`);
-
+const BasicBarH = forwardRef((props,ref) => {
+  const { data, error, fetchData } = useFetchData(`http://47.123.7.53:8000/person/project/collect/${props.pjID}/`);
+  
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
+  
   // 转换数据格式为数组
   const chartData = Object.entries(data).map(([name, value]) => ({
     role: name,
@@ -60,4 +71,5 @@ export default function BasicBarH({ pjID }) {
       />
     </Box>
   );
-}
+});
+export default BasicBarH;

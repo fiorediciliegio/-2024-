@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,forwardRef, useImperativeHandle } from 'react';
 import axios from 'axios';
 import { Typography, CircularProgress, Grid,Button, Paper,Card, TextField,
   CardContent, CardActionArea, Dialog,DialogTitle, DialogContent, DialogActions } from '@mui/material';
@@ -6,7 +6,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs'; 
 
-export default function SafetyIssueList ({projectId, projectName}) {
+const SafetyIssueList = forwardRef((props,ref) => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,26 +14,34 @@ export default function SafetyIssueList ({projectId, projectName}) {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [resolutionFeedback, setResolutionFeedback] = useState('')
   const [resolutionDate, setResolutionDate] = useState(dayjs());
+
+  const fetchIssues = async () => {
+    try {
+      const response = await axios.get(`http://47.123.7.53:8000/safety/issue/list/${props.projectId}/`);
+      // 检查响应数据是否为数组
+      if (Array.isArray(response.data.filtered_reports)) {
+        setIssues(response.data.filtered_reports);
+      } else {
+        // 如果不是数组，则将其转换为数组并设置
+        setIssues([response.data]);
+      }
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   //获取安全列表
   useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        const response = await axios.get(`http://47.123.7.53:8000/safety/issue/list/${projectId}/`);
-        // 检查响应数据是否为数组
-        if (Array.isArray(response.data.filtered_reports)) {
-          setIssues(response.data.filtered_reports);
-        } else {
-          // 如果不是数组，则将其转换为数组并设置
-          setIssues([response.data]);
-        }
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchIssues();
-  }, [projectId]);
+  }, [props.projectId]);
+
+    // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+    useImperativeHandle(ref, () => ({
+      refreshData() {
+        fetchIssues();
+      }
+    }));
 
   //根据状态显示卡片颜色
   const getCardStyle = (Status) => {
@@ -68,7 +76,7 @@ export default function SafetyIssueList ({projectId, projectName}) {
       // 成功处理后关闭弹窗并刷新问题列表
       handleCloseDialog();
       setLoading(true);
-      const response = await axios.get(`http://47.123.7.53:8000/safety/issue/list/${projectId}/`);
+      const response = await axios.get(`http://47.123.7.53:8000/safety/issue/list/${props.projectId}/`);
       setIssues(response.data.filtered_reports);
       setLoading(false);
     } catch (err) {
@@ -131,7 +139,7 @@ export default function SafetyIssueList ({projectId, projectName}) {
             <Grid item container spacing={1} direction="row">
               <Grid item container xs={6} direction="column">
                 <Typography variant='body2' gutterBottom>
-                  所属项目：{projectName}
+                  所属项目：{props.projectName}
                 </Typography>
                 <Typography variant="body2" gutterBottom>
                   安全员：{selectedIssue.srperson}
@@ -201,5 +209,6 @@ export default function SafetyIssueList ({projectId, projectName}) {
          )}
       </div>
   );
-};
+});
+export default SafetyIssueList;
 

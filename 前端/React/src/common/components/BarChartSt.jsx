@@ -1,10 +1,20 @@
-import * as React from 'react';
+import React, {useEffect, forwardRef, useImperativeHandle} from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import useFetchData from '../hooks/useFetchData.js';
 
-export default function StackBar({ projectId }) {
-  const { data, error } = useFetchData(`http://47.123.7.53:8000/quality/collect/${projectId}/`);
+const StackBar = forwardRef((props,ref) => {
+  const { data, error, fetchData } = useFetchData(`http://47.123.7.53:8000/quality/collect/${props.projectId}/`);
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
 
   if (error) {
     return <Alert severity="error">{error}</Alert>;
@@ -33,4 +43,5 @@ export default function StackBar({ projectId }) {
       height={350}
     />
   );
-}
+});
+export default StackBar;

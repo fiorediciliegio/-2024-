@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment }  from 'react';
+import React, { useState, useEffect, Fragment,forwardRef, useImperativeHandle }  from 'react';
 import List from '@mui/material/List';
 import {ListItem, ListItemText, Divider, ListItemAvatar,
   Avatar,Typography, Paper, Collapse, IconButton, Menu, MenuItem} from '@mui/material';
@@ -6,15 +6,15 @@ import { deepPurple, lightBlue } from '@mui/material/colors';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from 'axios';
 
-export default function PersonList({projectId}) {
+const PersonList = forwardRef((props,ref) => {
     const [personnel, setPersonnel] = useState([]);
     const [expanded, setExpanded] =useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedPerson, setSelectedPerson] = useState(null);
 
-    useEffect(() => {
+    const fetchData =()=>{
         // 发送 GET 请求获取项目人员数据
-        axios.get(`http://47.123.7.53:8000/person/project/list/${projectId}/`)
+        axios.get(`http://47.123.7.53:8000/person/project/list/${props.projectId}/`)
           .then(response => {
             console.log('Personnel data:', response.data);
             // 更新人员列表状态
@@ -23,7 +23,18 @@ export default function PersonList({projectId}) {
           .catch(error => {
             console.error('Error fetching personnel data:', error);
           });
-      }, [projectId]);
+      };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchData();
+    }
+  }));
 
       const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -42,13 +53,16 @@ export default function PersonList({projectId}) {
       //从项目移除人员
       const handleRemovePerson = () => {
         if (selectedPerson) {
-          axios.post(`http://47.123.7.53:8000/person/remove/${projectId}/`, {
+          axios.post(`http://47.123.7.53:8000/person/remove/${props.projectId}/`, {
             person_id: selectedPerson.perid,
           })
             .then(response => {
               // 从人员列表中移除被删除的人员
               setPersonnel(personnel.filter(person => person.perid !== selectedPerson.perid));
               handleClose();
+              if(props.onUpdate){
+                props.onUpdate();
+              };
             })
             .catch(error => {
               console.error('Error removing person:', error);
@@ -137,4 +151,5 @@ export default function PersonList({projectId}) {
           </Menu>
         </Paper>
       );
-    }
+    });
+    export default PersonList;

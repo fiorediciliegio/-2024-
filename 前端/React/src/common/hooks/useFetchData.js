@@ -5,8 +5,7 @@ const useFetchData = (url) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
       try {
         const response = await axios.get(url);
         setData(response.data);
@@ -14,11 +13,11 @@ const useFetchData = (url) => {
         setError("Error fetching data: " + error.message);
       }
     };
-
+  useEffect(() => {
     fetchData();
   }, [url]);
 
-  return { data, error };
+  return { data, error, fetchData};
 };
 
 export default useFetchData;

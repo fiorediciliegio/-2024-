@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -12,7 +12,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from '../hooks/AuthContext';
 
-export default function PersonTable() {
+const PersonTable = forwardRef((props,ref) => {
   const [searchQuery, setSearchQuery] = useState(""); // 用于保存搜索词
   const [personInfo, setpersonInfo] = useState(0); 
   const [rowsPerPage, setRowsPerPage] = useState(10); 
@@ -25,6 +25,10 @@ export default function PersonTable() {
 
   //发送请求到后端获得数据
   useEffect(() => {
+    fetchPersonData();
+  }, []);
+
+  const fetchPersonData = () => {
     axios
       .get(`http://47.123.7.53:8000/person/list/`)
       .then((res) => {
@@ -40,12 +44,12 @@ export default function PersonTable() {
       .catch((error) => {
         console.error("Error fetching data from server", error);
       });
-  }, []);
-
+  };
+  // 处理分页变化
   const handleChangePage = (event, newPage) => {
     setpersonInfo(newPage);
   };
-
+ // 处理每页显示条数变化
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setpersonInfo(0); 
@@ -68,8 +72,7 @@ export default function PersonTable() {
       .post("http://47.123.7.53:8000/person/delete/", { perid: deleteId })
       .then(() => {
         // 删除成功后更新前端项目列表
-        setRows(rows.filter(row => row.pjid !== deleteId));
-        // 关闭菜单
+        fetchPersonData();
         handleMenuClose();
       })
       .catch((error) => {
@@ -83,6 +86,13 @@ export default function PersonTable() {
   const filteredRows = rows.filter(row =>
     row.pername.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+   // 使用 useImperativeHandle 向父组件暴露刷新数据的方法
+   useImperativeHandle(ref, () => ({
+    refreshData() {
+      fetchPersonData();
+    }
+  }));
 
   return (
     <Paper sx={{ width: "90%", overflow: "hidden", padding: "20px" }}>
@@ -162,4 +172,5 @@ export default function PersonTable() {
       </Menu>}
     </Paper>
   );
-}
+});
+export default PersonTable;
